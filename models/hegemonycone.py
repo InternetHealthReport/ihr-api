@@ -14,6 +14,9 @@ class HegemonyCone(Base):
         {
             'name': 'ihr_hegemonycone_asn_id_timebin_idx',
             'columns': ['asn_id', 'timebin DESC']
+        },{
+            'name': 'ihr_hegemonycone_asn_id_idx',
+            'columns': ['asn_id']
         }
     ]
 
@@ -38,3 +41,4 @@ class HegemonyCone(Base):
                     nullable=False, doc='Autonomous System Number (ASN).')
 
     asn_relation = relationship('ASN', back_populates='hegemony_cones')
+    

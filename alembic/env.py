@@ -7,6 +7,8 @@ from config.database import Base
 import importlib.util
 import pathlib
 from alembic.operations import ops
+from alembic.operations.ops import CreateIndexOp
+from sqlalchemy import inspect, text
 
 # Get Alembic config
 config = context.config
@@ -129,36 +131,75 @@ def create_index_ops(table_name, indexes_meta):
     return upgrade_ops, downgrade_ops
 
 
+def check_index_exists(context, table_name, index_name):
+    """Check if index exists using MigrationContext."""
+    print(index_name)
+    # In offline mode, assume index doesn't exist
+    if not hasattr(context, 'bind'):
+        return False
+
+    sql = text("""
+    SELECT EXISTS (
+        SELECT 1 
+        FROM pg_indexes 
+        WHERE tablename = :table_name 
+        AND indexname = :index_name
+    );
+    """)
+
+    try:
+        return context.bind.execute(sql, {
+            'table_name': table_name,
+            'index_name': index_name
+        }).scalar()
+    except Exception:
+        return False
+
+
 def process_ops(context, upgrade_ops, downgrade_ops):
     """Process upgrade and downgrade operations."""
     final_upgrade_ops = []
-    final_downgrade_ops = []
+    new_downgrade_ops = []
 
-    # First pass: Handle table creations and their features
+    # Get all table names from metadata
+    all_tables = target_metadata.tables.keys()
+
+    # Handle table creations and their features
     for op_ in upgrade_ops.ops:
         table_name = op_.table_name
         table_obj = target_metadata.tables.get(table_name)
+
+        # Always add table creation
         final_upgrade_ops.append(op_)
 
-        # Create hypertable if configured
-        hypertable_meta = getattr(table_obj, '__hypertable__', None)
-        if hypertable_meta:
-            upgrade, downgrade = create_hypertable_ops(
-                table_name, hypertable_meta)
-            final_upgrade_ops.extend(upgrade)
-            final_downgrade_ops.extend(downgrade)
+        # Only process hypertable ops if this is a table creation
+        if isinstance(op_, ops.CreateTableOp):
+            hypertable_meta = getattr(table_obj, '__hypertable__', None)
+            if hypertable_meta:
+                upgrade, downgrade = create_hypertable_ops(
+                    table_name, hypertable_meta)
+                final_upgrade_ops.extend(upgrade)
+                new_downgrade_ops.extend(downgrade)
 
-        # Create indexes if configured
+    # Handle index creations
+    for table_name in all_tables:
+        table_obj = target_metadata.tables.get(table_name)
         indexes_meta = getattr(table_obj, '__indexes__', None)
+
         if indexes_meta:
-            upgrade, downgrade = create_index_ops(table_name, indexes_meta)
-            final_upgrade_ops.extend(upgrade)
-            final_downgrade_ops.extend(downgrade)
+            new_indexes = [
+                idx for idx in indexes_meta
+                if not check_index_exists(context, table_name, idx['name'])
+            ]
+            if new_indexes:
+                upgrade, downgrade = create_index_ops(
+                    table_name, new_indexes)
+                final_upgrade_ops.extend(upgrade)
+                new_downgrade_ops.extend(downgrade)
 
     # Update operations
     upgrade_ops.ops = final_upgrade_ops
-    downgrade_ops.ops = final_downgrade_ops + downgrade_ops.ops
-    
+    downgrade_ops.ops = new_downgrade_ops + downgrade_ops.ops
 
 
 def run_migrations_offline() -> None:
