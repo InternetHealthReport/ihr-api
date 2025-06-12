@@ -103,3 +103,23 @@ Once running, you can access:
 - API: **[http://localhost:8000/ihr/api](http://localhost:8000/ihr/api)**
 - Interactive Docs (Swagger UI): **[http://localhost:8000/ihr/api/docs](http://localhost:8000/docs)**
 - Redoc Docs: **[http://localhost:8000/ihr/api/redoc](http://localhost:8000/redoc)**
+
+---
+
+# Documentation
+
+The `docs/` folder contains detailed documentation for various aspects of the project. Below is a list of available documentation files and their descriptions:
+
+### 1. [Project Structure](docs/project_structure.md)
+Provides an overview of the project's file and folder structure, organized according to the **Service-Controller-Repository** architectural pattern.
+
+### 2. [Project Architecture](docs/project_architecture.md)
+Explains the **Service-Controller-Repository** architecture adopted by the project, highlighting the responsibilities of each layer and how they interact.
+
+### 3. [Database Migration](docs/database_migration.md)
+Details how to manage database migrations using Alembic, including TimescaleDB-specific features like hypertables and compression policies.
+
+### 4. [Adding a New Endpoint](docs/add_new_endpoint.md)
+A step-by-step guide on how to add a new endpoint to the application.
+
+
