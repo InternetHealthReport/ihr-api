@@ -9,5 +9,3 @@ class Country(Base):
     name = Column(String(255), nullable=False)
     tartiflette = Column(Boolean, default=False, nullable=False)
     disco = Column(Boolean, default=False, nullable=False)
-    continent = Column(String(50), nullable=True) 
-    language = Column(String(50), nullable=False,  server_default=text("'AR'")) 

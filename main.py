@@ -3,6 +3,7 @@ import pkgutil
 from fastapi import FastAPI
 from controllers import __path__ as controllers_path  # Adjusted for `ihr` structure
 
+# The base URL of the app
 app = FastAPI(root_path="/ihr/api")
 
 # Automatically import and register all routers inside "ihr/controllers"

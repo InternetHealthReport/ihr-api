@@ -3,15 +3,19 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 from dotenv import load_dotenv
 
+# Load environment variables from .env file
 load_dotenv()
 
-DATABASE_URL = "postgresql://ihr_bash_user:ihr_password@localhost:5434/ihr_bash"
-
+# Read the database URL from the environment variable
+DATABASE_URL = os.getenv("DATABASE_URL")
+# Create the SQLAlchemy engine with the database URL
 engine = create_engine(DATABASE_URL)
+# Create a session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Declare a base class for ORM models
 Base = declarative_base()
 
-# Dependency for FastAPI routes
+# Dependency to get a DB session for FastAPI routes (used in controllers)
 def get_db():
     db = SessionLocal()
     try:
