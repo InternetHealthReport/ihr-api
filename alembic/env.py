@@ -35,6 +35,7 @@ sys.path.append(str(models_path.parent))
 model_classes = []
 
 # Load all model classes inheriting from Base (excluding __init__.py)
+# This is done so that we can later access __hypertable__ and __indexes__ attributes defined in the models and use them in generating the SQL commands
 for file in models_path.glob("*.py"):
     if file.name != "__init__.py":
         module_name = f"models.{file.stem}"

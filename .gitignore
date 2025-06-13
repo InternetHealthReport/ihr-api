@@ -35,7 +35,6 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-notes.txt
 
 # Unit test / coverage reports
 htmlcov/
@@ -129,7 +128,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/

@@ -8,14 +8,14 @@ This project is a FastAPI-based backend for the IHR system. It is designed for f
 
 ### 1. Clone the Repository
 
-### 2. Create a `.env` File
+### 2. Modify the `.env` File
 
-In the project root directory, create a `.env` file to define environment-specific settings, including the database connection.
+In the project root directory, modify the `.env` file to define your specific database connection string.
 
-Example `.env` content:
+`.env` content:
 
 ```env
-DATABASE_URL=postgresql://postgres:123password456@localhost:5435/ihr-fastapi
+DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
 ```
 
 > Make sure PostgreSQL is running and the database exists before continuing.
@@ -63,9 +63,9 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 ### **Step 4: Access the API**
 Once running, you can access:
-- API: **[http://localhost:8000/ihr/api](http://localhost:8000/ihr/api)**
-- Interactive Docs (Swagger UI): **[http://localhost:8000/ihr/api/docs](http://localhost:8000/docs)**
-- Redoc Docs: **[http://localhost:8000/ihr/api/redoc](http://localhost:8000/redoc)**
+- API: **[http://localhost:8000](http://localhost:8000)**
+- Interactive Docs (Swagger UI): **[http://localhost:8000/docs](http://localhost:8000/docs)**
+- Redoc Docs: **[http://localhost:8000/redoc](http://localhost:8000/redoc)**
 
 ---
 
@@ -100,9 +100,9 @@ docker logs -f <container-id>
 ### Step 4: Access the API
 
 Once running, you can access:
-- API: **[http://localhost:8000/ihr/api](http://localhost:8000/ihr/api)**
-- Interactive Docs (Swagger UI): **[http://localhost:8000/ihr/api/docs](http://localhost:8000/docs)**
-- Redoc Docs: **[http://localhost:8000/ihr/api/redoc](http://localhost:8000/redoc)**
+- API: **[http://localhost:8000](http://localhost:8000)**
+- Interactive Docs (Swagger UI): **[http://localhost:8000/docs](http://localhost:8000/docs)**
+- Redoc Docs: **[http://localhost:8000/redoc](http://localhost:8000/redoc)**
 
 ---
 

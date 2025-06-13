@@ -3,6 +3,8 @@ from fastapi import Request
 from urllib.parse import urlencode, urlunparse
 from pydantic import BaseModel
 
+# T is a generic type variable that will be replaced with a specific DTO type (e.g., CountryDTO) 
+# when GenericResponseDTO is used (e.g GenericResponseDTO[CountryDTO] used in CountryController).
 T = TypeVar("T")
 
 # The generic response format returned by all endpoints

@@ -1,1 +1,37 @@
-Generic single-database configuration.
+## Alembic Directory
+
+The `/alembic` folder and its contents were automatically created by running:
+
+```bash
+alembic init alembic
+```
+This directory contains all the configuration and script files necessary to manage the project’s database schema migrations.
+
+---
+
+### What's Inside the `/alembic` Directory
+
+* **`env.py`**
+  The core configuration file for Alembic. It sets up the database connection, imports the models, and controls how migrations are run.
+
+* **`script.py.mako`**
+  A Mako template used to generate new migration files. When you run commands like  `alembic revision --autogenerate`, Alembic uses this template to structure the migration script.
+
+* **`versions/`**
+  A folder that stores all versioned migration scripts. Each file here represents a change to your database schema and includes both upgrade and downgrade instructions.
+
+---
+
+### About `script.py.mako`
+
+The `script.py.mako` file is a template that defines the default structure of migration scripts. It contains placeholders that Alembic fills in during script generation.
+
+It typically includes:
+
+* `revision`: A unique ID for the migration.
+* `down_revision`: The ID of the previous migration, ensuring migration order is preserved.
+* `upgrade()`: A function where changes to the schema are defined.
+* `downgrade()`: A function to undo those changes if needed.
+
+Alembic uses this template to maintain consistency and structure across all migration scripts.
+

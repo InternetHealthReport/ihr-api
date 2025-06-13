@@ -128,6 +128,7 @@ This metadata drives the logic for custom hypertable creation, compression, and 
 ---
 
 ## Key Functions in `/alembic/env.py`
+All functions in `/alembic/env.py` are invoked automatically by alembic during the automatic generation of the migration file (we don't call them manually).
 
 ### 1. `process_revision_directives`
 
