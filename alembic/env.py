@@ -16,7 +16,10 @@ from dotenv import load_dotenv
 config = context.config
 
 # Load environment variables from .env file
-load_dotenv()
+try:
+    load_dotenv()
+except:
+    pass
 # Override Alembic DB URL (found in alembic.ini) with the DB URL found in the .env file
 DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:

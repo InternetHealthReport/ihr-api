@@ -8,9 +8,9 @@ This project is a FastAPI-based backend for the IHR system. It is designed for f
 
 ### 1. Clone the Repository
 
-### 2. Modify the `.env` File
+### 2. Create a `.env` File
 
-In the project root directory, modify the `.env` file to define your specific database connection string.
+In the project root directory, create a new `.env` file to define your specific database connection string.
 
 `.env` content:
 
@@ -18,7 +18,6 @@ In the project root directory, modify the `.env` file to define your specific da
 DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
 ```
 
-> Make sure PostgreSQL is running and the database exists before continuing.
 
 ---
 
