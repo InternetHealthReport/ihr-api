@@ -15,7 +15,7 @@ class DiscoProbes(Base):
     starttime = Column(TIMESTAMP(timezone=True), nullable=False,
                        doc='Probe disconnection time.')
 
-    endtime = Column(TIMESTAMP(timezone=True), nullable=True,
+    endtime = Column(TIMESTAMP(timezone=True), nullable=False,
                      doc='Reconnection time of the probe, this may not be reported if other probes have reconnected earlier.')
 
     level = Column(Float, default=0.0, nullable=False,

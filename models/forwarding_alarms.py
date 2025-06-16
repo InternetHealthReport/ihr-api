@@ -13,7 +13,7 @@ class ForwardingAlarms(Base):
 
     __indexes__ = [
         {
-            'name': '"ihr_forwarding_alarms_asn_id_timebin_idx"',
+            'name': 'ihr_forwarding_alarms_asn_id_timebin_idx',
             'columns': ['asn_id', 'timebin DESC']
         }
     ]

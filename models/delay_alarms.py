@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    Column, Integer, String, Float, DateTime, ForeignKey, BigInteger, PrimaryKeyConstraint
+    Column, Integer, String, Float, ForeignKey, BigInteger, PrimaryKeyConstraint
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship

@@ -1,8 +1,8 @@
 from sqlalchemy import (
-    Column, Integer, String, Float, DateTime, Boolean, BigInteger
+    Column, Integer, String, Float, Boolean, BigInteger
 )
-from sqlalchemy.orm import declarative_base
 from config.database import Base
+from sqlalchemy.dialects.postgresql import TIMESTAMP
 
 
 class DiscoEvents(Base):
@@ -38,12 +38,12 @@ class DiscoEvents(Base):
         doc='Name of the topological (ASN) or geographical area where the network disconnection happened.'
     )
     starttime = Column(
-        DateTime,
+        TIMESTAMP(timezone=True),
         nullable=False,
         doc='Estimated start time of the network disconnection.'
     )
     endtime = Column(
-        DateTime,
+        TIMESTAMP(timezone=True),
         nullable=False,
         doc=(
             'Estimated end time of the network disconnection. '

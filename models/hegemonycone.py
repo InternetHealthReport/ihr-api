@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, Integer, DateTime, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import Column, BigInteger, Integer, ForeignKey, PrimaryKeyConstraint
 from sqlalchemy.orm import relationship
 from config.database import Base
 from sqlalchemy.dialects.postgresql import TIMESTAMP
