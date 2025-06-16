@@ -11,7 +11,4 @@ class ASN(Base):
     disco = Column(Boolean, default=False, nullable=False, doc='True if participate in network disconnection analysis.')
     ashash = Column(Boolean, default=False, nullable=False, doc='True if participate in AS dependency analysis.')
 
-    # Relationship to HegemonyCone
-    hegemony_cones = relationship('HegemonyCone', back_populates='asn_relation')
-
 
