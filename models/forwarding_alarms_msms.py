@@ -12,8 +12,4 @@ class ForwardingAlarmsMsms(Base):
 
     probeid = Column(Integer, default=0, nullable=False)
 
-    alarm_id = Column(BigInteger,
-                      ForeignKey('ihr_forwarding_alarms.id', ondelete='CASCADE'),
-                      nullable=False)
-
-    alarm = relationship('ForwardingAlarms', back_populates='msms')
+    alarm_id = Column(BigInteger, nullable=False)

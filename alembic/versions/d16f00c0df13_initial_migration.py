@@ -1,8 +1,8 @@
 """initial migration
 
-Revision ID: 880ae10f65b5
+Revision ID: d16f00c0df13
 Revises: 
-Create Date: 2025-06-19 15:39:01.419361
+Create Date: 2025-06-19 16:37:25.431083
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '880ae10f65b5'
+revision: str = 'd16f00c0df13'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -43,6 +43,13 @@ def upgrade() -> None:
     sa.Column('disco', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('code')
     )
+    op.create_table('ihr_delay_alarms_msms',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('msmid', sa.BigInteger(), nullable=False),
+    sa.Column('probeid', sa.Integer(), nullable=False),
+    sa.Column('alarm_id', sa.BigInteger(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('ihr_disco_events',
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('mongoid', sa.String(length=24), nullable=False),
@@ -54,6 +61,13 @@ def upgrade() -> None:
     sa.Column('nbdiscoprobes', sa.Integer(), nullable=False),
     sa.Column('totalprobes', sa.Integer(), nullable=False),
     sa.Column('ongoing', sa.Boolean(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('ihr_forwarding_alarms_msms',
+    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
+    sa.Column('msmid', sa.BigInteger(), nullable=False),
+    sa.Column('probeid', sa.Integer(), nullable=False),
+    sa.Column('alarm_id', sa.BigInteger(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('ihr_tr_hegemony_identifier',
@@ -266,22 +280,6 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id', 'timebin')
     )
     op.execute("SELECT create_hypertable('ihr_tr_hegemony', by_range('timebin', INTERVAL '2 day'));")
-    op.create_table('ihr_delay_alarms_msms',
-    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('msmid', sa.BigInteger(), nullable=False),
-    sa.Column('probeid', sa.Integer(), nullable=False),
-    sa.Column('alarm_id', sa.BigInteger(), nullable=False),
-    sa.ForeignKeyConstraint(['alarm_id'], ['ihr_delay_alarms.id'], name='fk_delay_alarms_msms_alarm_id', ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('ihr_forwarding_alarms_msms',
-    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('msmid', sa.BigInteger(), nullable=False),
-    sa.Column('probeid', sa.Integer(), nullable=False),
-    sa.Column('alarm_id', sa.BigInteger(), nullable=False),
-    sa.ForeignKeyConstraint(['alarm_id'], ['ihr_forwarding_alarms.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.execute('CREATE INDEX IF NOT EXISTS ihr_atlas_delay_endpoint_id_timebin_idx ON ihr_atlas_delay (endpoint_id, timebin DESC);')
     op.execute('CREATE INDEX IF NOT EXISTS ihr_atlas_delay_startpoint_id_endpoint_id_timebin_idx ON ihr_atlas_delay (startpoint_id, endpoint_id, timebin DESC);')
     op.execute('CREATE INDEX IF NOT EXISTS ihr_atlas_delay_startpoint_id_timebin_idx ON ihr_atlas_delay (startpoint_id, timebin DESC);')
@@ -348,8 +346,6 @@ def downgrade() -> None:
     op.execute('DROP INDEX IF EXISTS ihr_metis_atlas_selection_metric_rank_timebin_idx;')
     op.execute('DROP INDEX IF EXISTS ihr_tr_hegemony_dependency_id_timebin_idx;')
     op.execute('DROP INDEX IF EXISTS ihr_tr_hegemony_origin_id_timebin_idx;')
-    op.drop_table('ihr_forwarding_alarms_msms')
-    op.drop_table('ihr_delay_alarms_msms')
     op.drop_table('ihr_tr_hegemony')
     op.drop_table('ihr_metis_atlas_selection')
     op.drop_table('ihr_metis_atlas_deployment')
@@ -366,7 +362,9 @@ def downgrade() -> None:
     op.drop_table('ihr_atlas_delay_alarms')
     op.drop_table('ihr_atlas_delay')
     op.drop_table('ihr_tr_hegemony_identifier')
+    op.drop_table('ihr_forwarding_alarms_msms')
     op.drop_table('ihr_disco_events')
+    op.drop_table('ihr_delay_alarms_msms')
     op.drop_table('ihr_country')
     op.drop_table('ihr_atlas_location')
     op.drop_table('ihr_asn')

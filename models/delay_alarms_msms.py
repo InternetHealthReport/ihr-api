@@ -12,10 +12,4 @@ class DelayAlarmsMsms(Base):
 
     probeid = Column(Integer, default=0, nullable=False)
 
-    alarm_id = Column(BigInteger,
-                      ForeignKey('ihr_delay_alarms.id', ondelete='CASCADE',
-                                 name='fk_delay_alarms_msms_alarm_id'),
-                      nullable=False)
-
-    alarm = relationship('DelayAlarms', foreign_keys=[
-                         alarm_id], backref='msmid_entries')
+    alarm_id = Column(BigInteger, nullable=False)
