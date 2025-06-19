@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models.country_model import Country
+from models.country import Country
 from typing import Optional, List, Tuple  # Added Tuple for return type
 from sqlalchemy import asc
 from globals import page_size
