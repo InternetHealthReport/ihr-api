@@ -1,9 +1,14 @@
-from sqlalchemy import Column, Integer, String,BigInteger
+from sqlalchemy import Column, Integer, String, BigInteger
 from config.database import Base
 
-class AtlasLocation(Base):
-    __tablename__ = 'ihr_atlas_location' 
 
+class AtlasLocation(Base):
+    __tablename__ = 'ihr_atlas_location'
+    __indexes__ = [
+        {
+            'name': 'ihr_atlas_location_af_name_type_idx',
+            'columns': ['af', 'name','type'],
+        },]
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     name = Column(
         String(255),

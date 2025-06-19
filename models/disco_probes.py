@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, Float, ForeignKey, String,Integer
+from sqlalchemy import Column, BigInteger, Float, ForeignKey, String, Integer
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import relationship
 from config.database import Base
@@ -6,6 +6,11 @@ from config.database import Base
 
 class DiscoProbes(Base):
     __tablename__ = 'ihr_disco_probes'
+
+    __indexes__ = [{
+        'name': 'ihr_disco_probes_event_id',
+        'columns': ['event_id']
+    }]
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
 
