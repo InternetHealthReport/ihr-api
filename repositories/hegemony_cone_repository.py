@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-from models.hegemonycone import HegemonyCone
+from models.hegemony_cone import HegemonyCone
 from typing import Optional, List, Tuple
 from globals import page_size
 
