@@ -71,19 +71,12 @@ class HegemonyPrefix(Base):
                   doc='True if the prefix is originated by multiple ASNs.')
 
     asn_id = Column(BigInteger,
-                    ForeignKey('ihr_asn.number', ondelete='CASCADE', name='fk_hegemony_prefix_asn_id'),
                     nullable=False,
                     doc='Dependency. Network commonly seen in BGP paths towards monitored prefix.')
     originasn_id = Column(BigInteger,
-                          ForeignKey('ihr_asn.number', ondelete='CASCADE', name='fk_hegemony_prefix_originasn_id'),
                           nullable=False,
                           doc='Network seen as originating the monitored prefix.')
 
     country_id = Column(String(4),
-                        ForeignKey('ihr_country.code', ondelete='CASCADE', name='fk_hegemony_prefix_country_id'),
                         nullable=False,
                         doc="Country for the monitored prefix identified by Maxmind's Geolite2 geolocation database.")
-
-    asn = relationship('ASN', foreign_keys=[asn_id], back_populates='prefix_asn')
-    originasn = relationship('ASN', foreign_keys=[originasn_id], back_populates='prefix_originasn')
-    country = relationship('Country')

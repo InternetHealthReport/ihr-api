@@ -48,16 +48,12 @@ class Hegemony(Base):
                 doc='Address Family (IP version), values are either 4 or 6.')
 
     asn_id = Column(BigInteger,
-                    ForeignKey('ihr_asn.number', ondelete='CASCADE', name='fk_hegemony_asn_id'),
                     nullable=False,
                     doc='Dependency. Transit network commonly seen in BGP paths towards originasn.')
 
     originasn_id = Column(BigInteger,
-                          ForeignKey('ihr_asn.number', ondelete='CASCADE', name='fk_hegemony_originasn_id'),
                           nullable=False,
                           doc='Dependent network, it can be any public ASN. Retrieve all dependencies of a network by setting only this parameter and a timebin.')
 
-    asn = relationship('ASN', foreign_keys=[asn_id])
-    originasn = relationship('ASN', foreign_keys=[originasn_id])
-
+ 
    

@@ -48,14 +48,11 @@ class HegemonyCountry(Base):
                          doc='If True, then origin ASNs of BGP path are ignored (focus only on transit networks).')
 
     asn_id = Column(BigInteger,
-                    ForeignKey('ihr_asn.number', ondelete='CASCADE', name='fk_hegemony_country_asn_id'),
                     nullable=False,
                     doc='Dependency. Network commonly seen in BGP paths towards monitored country.')
 
     country_id = Column(String(4),
-                        ForeignKey('ihr_country.code', ondelete='CASCADE', name='fk_hegemony_country_country_id'),
                         nullable=False,
                         doc='Monitored country. Retrieve all dependencies of a country by setting only this parameter and a timebin.')
 
-    asn = relationship('ASN')
-    country = relationship('Country')
+ 

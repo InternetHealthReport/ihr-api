@@ -36,14 +36,9 @@ class AtlasDelayAlarms(Base):
                        doc='Significance of the AS Hegemony change.')
 
     startpoint_id = Column(Integer,
-                           ForeignKey('ihr_atlas_location.id', ondelete='CASCADE', name='fk_atlas_delay_startpoint'),
                            nullable=False,
                            doc='Starting location reported as anomalous.')
 
     endpoint_id = Column(Integer,
-                         ForeignKey('ihr_atlas_location.id', ondelete='CASCADE', name='fk_atlas_delay_endpoint'),
                          nullable=False,
                          doc='Ending location reported as anomalous.')
-
-    startpoint = relationship('AtlasLocation', foreign_keys=[startpoint_id], backref='anomalous_startpoint')
-    endpoint = relationship('AtlasLocation', foreign_keys=[endpoint_id], backref='anomalous_endpoint')

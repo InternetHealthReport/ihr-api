@@ -74,10 +74,7 @@ class DelayAlarms(Base):
     )
     asn_id = Column(
         BigInteger,
-        ForeignKey('ihr_asn.number', ondelete='CASCADE'),
         nullable=False,
         doc='ASN or IXPID of the reported network.'
     )
-
-    asn_relation = relationship('ASN', backref='delay_alarms')
 

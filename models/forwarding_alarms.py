@@ -41,7 +41,5 @@ class ForwardingAlarms(Base):
     msm_prb_ids = Column(JSONB, nullable=True, default=None,
                          doc='List of Atlas measurement and probe IDs used to compute this alarm.')
 
-    asn_id = Column(BigInteger, ForeignKey('ihr_asn.number', ondelete='CASCADE', name='fk_forwardingalarms_asn_id'),
+    asn_id = Column(BigInteger,
                     nullable=False, doc='ASN or IXPID of the reported network.')
-
-    asn_relation = relationship('ASN', back_populates='forwarding_alarms')
