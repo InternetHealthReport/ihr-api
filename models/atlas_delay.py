@@ -61,13 +61,13 @@ class AtlasDelay(Base):
     nbrealrtts = Column(Integer, default=0, nullable=False,
                         doc='Number of RTT samples directly obtained from traceroutes (as opposed to differential RTTs).')
 
-    startpoint_id = Column(BigInteger,
+    startpoint_id = Column(Integer,
                            ForeignKey(
                                'ihr_atlas_location.id', ondelete='CASCADE', name='fk_atlas_delay_startpoint'),
                            nullable=False,
                            doc='Starting location for the delay estimation.')
 
-    endpoint_id = Column(BigInteger,
+    endpoint_id = Column(Integer,
                          ForeignKey(
                              'ihr_atlas_location.id', ondelete='CASCADE', name='fk_atlas_delay_endpoint'),
                          nullable=False,

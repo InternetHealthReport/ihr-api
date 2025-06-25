@@ -11,10 +11,10 @@ class DelayAlarmsMsms(Base):
         'columns':['alarm_id']
     }]
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     msmid = Column(BigInteger, default=0, nullable=False)
 
     probeid = Column(Integer, default=0, nullable=False)
 
-    alarm_id = Column(BigInteger, nullable=False)
+    alarm_id = Column(Integer, nullable=False)

@@ -41,13 +41,13 @@ class TRHegemony(Base):
     nbsamples = Column(Integer, default=0, nullable=False,
                        doc='The number of probe ASes for which we have traceroutes to the origin in the time interval. We only include AS Hegemony values that are based on traceroutes from at least ten probe ASes.')
 
-    dependency_id = Column(BigInteger,
+    dependency_id = Column(Integer,
                            ForeignKey('ihr_tr_hegemony_identifier.id', ondelete='CASCADE',
                                       name='fk_tr_hegemony_dependency_id'),
                            nullable=False,
                            doc='Dependency. Transit network or IXP commonly seen in traceroutes towards the origin.')
 
-    origin_id = Column(BigInteger,
+    origin_id = Column(Integer,
                        ForeignKey('ihr_tr_hegemony_identifier.id', ondelete='CASCADE',
                                   name='fk_tr_hegemony_origin_id'),
                        nullable=False,
