@@ -39,16 +39,9 @@ class HegemonyAlarms(Base):
                 doc='Address Family (IP version), values are either 4 or 6.')
 
     asn_id = Column(BigInteger,
-                    ForeignKey('ihr_asn.number', ondelete='CASCADE',
-                               name='fk_hegemony_alarms_asn_id'),
                     nullable=False,
                     doc='ASN of the anomalous dependency (transit network).')
 
     originasn_id = Column(BigInteger,
-                          ForeignKey('ihr_asn.number', ondelete='CASCADE',
-                                     name='fk_hegemony_alarms_originasn_id'),
                           nullable=False,
                           doc='ASN of the reported dependent network.')
-
-    asn = relationship('ASN', foreign_keys=[asn_id])
-    originasn = relationship('ASN', foreign_keys=[originasn_id])

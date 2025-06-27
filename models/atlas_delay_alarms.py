@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, Float, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import Column, BigInteger, Float, ForeignKey, PrimaryKeyConstraint,Integer
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import relationship
 from config.database import Base
@@ -35,15 +35,10 @@ class AtlasDelayAlarms(Base):
     deviation = Column(Float, default=0.0, nullable=False,
                        doc='Significance of the AS Hegemony change.')
 
-    startpoint_id = Column(BigInteger,
-                           ForeignKey('ihr_atlas_location.id', ondelete='CASCADE', name='fk_atlas_delay_startpoint'),
+    startpoint_id = Column(Integer,
                            nullable=False,
                            doc='Starting location reported as anomalous.')
 
-    endpoint_id = Column(BigInteger,
-                         ForeignKey('ihr_atlas_location.id', ondelete='CASCADE', name='fk_atlas_delay_endpoint'),
+    endpoint_id = Column(Integer,
                          nullable=False,
                          doc='Ending location reported as anomalous.')
-
-    startpoint = relationship('AtlasLocation', foreign_keys=[startpoint_id], backref='anomalous_startpoint')
-    endpoint = relationship('AtlasLocation', foreign_keys=[endpoint_id], backref='anomalous_endpoint')

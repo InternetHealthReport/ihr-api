@@ -32,8 +32,5 @@ class Forwarding(Base):
                        doc='Cumulated link delay deviation. Values close to zero represent usual delays for the network, whereas higher values stand for significant links congestion in the monitored network.')
 
     asn_id = Column(BigInteger,
-                    ForeignKey('ihr_asn.number', ondelete='CASCADE', name='fk_forwarding_asn_id'),
                     nullable=False,
                     doc='ASN or IXP ID of the monitored network (see number in /network/).')
-
-    asn = relationship('ASN', foreign_keys=[asn_id])

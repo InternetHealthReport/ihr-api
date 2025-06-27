@@ -9,7 +9,7 @@ class AtlasLocation(Base):
             'name': 'ihr_atlas_location_af_name_type_idx',
             'columns': ['af', 'name','type'],
         },]
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(
         String(255),
         nullable=False,

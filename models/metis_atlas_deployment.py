@@ -44,8 +44,7 @@ class MetisAtlasDeployment(Base):
                        doc='The number of probe ASes for which we have traceroutes to this AS in the time interval. We currently only include candidates that were reached by at least 50% of probe ASes, hence these values are always large.')
 
     asn_id = Column(BigInteger,
-                    ForeignKey('ihr_asn.number', ondelete='CASCADE', name='fk_metis_atlas_deployment_asn_id'),
                     nullable=False,
                     doc="Atlas probes' Autonomous System Number.")
 
-    asn = relationship('ASN')
+ 

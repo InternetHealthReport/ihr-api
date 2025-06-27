@@ -12,7 +12,7 @@ class DiscoProbes(Base):
         'columns': ['event_id']
     }]
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     probe_id = Column(Integer, nullable=False,
                       doc='Atlas probe ID of disconnected probe.')
@@ -38,7 +38,7 @@ class DiscoProbes(Base):
     lon = Column(Float, default=0.0, nullable=False,
                  doc='Longitude of the probe during the network detection as reported by RIPE Atlas.')
 
-    event_id = Column(BigInteger,
+    event_id = Column(Integer,
                       ForeignKey('ihr_disco_events.id', ondelete='CASCADE',
                                  name='fk_disco_probes_event_id'),
                       nullable=False,

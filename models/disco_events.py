@@ -17,7 +17,7 @@ class DiscoEvents(Base):
     }]
 
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     mongoid = Column(
         String(24),
         nullable=False,
