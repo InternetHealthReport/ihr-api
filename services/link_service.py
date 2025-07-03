@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from repositories.delay_repository import DelayRepository
 from dtos.link_delay_dto import LinkDelayDTO
+from repositories.forwarding_repository import ForwardingRepository
+from dtos.link_forwarding_dto import LinkForwardingDTO
 from typing import Optional, List, Tuple
 from datetime import datetime
 
@@ -8,6 +10,7 @@ from datetime import datetime
 class LinkService:
     def __init__(self):
         self.delay_repository = DelayRepository()
+        self.forwarding_repository = ForwardingRepository()
 
     def get_link_delays(
         self,
@@ -38,3 +41,33 @@ class LinkService:
             magnitude=delay.magnitude,
             asn_name=delay.asn_relation.name if delay.asn_relation else None
         ) for delay in delays], total_count
+
+    def get_link_forwardings(
+        self,
+        db: Session,
+        timebin_gte: Optional[datetime] = None,
+        timebin_lte: Optional[datetime] = None,
+        asn_ids: Optional[List[int]] = None,
+        magnitude: Optional[float] = None,
+        page: int = 1,
+        order_by: Optional[str] = None
+    ) -> Tuple[List[LinkForwardingDTO], int]:
+        """
+        Get link forwarding data with filtering.
+        """
+        forwardings, total_count = self.forwarding_repository.get_all(
+            db,
+            timebin_gte=timebin_gte,
+            timebin_lte=timebin_lte,
+            asn_ids=asn_ids,
+            magnitude=magnitude,
+            page=page,
+            order_by=order_by
+        )
+
+        return [LinkForwardingDTO(
+            timebin=forwarding.timebin,
+            asn=forwarding.asn,
+            magnitude=forwarding.magnitude,
+            asn_name=forwarding.asn_relation.name if forwarding.asn_relation else None
+        ) for forwarding in forwardings], total_count
