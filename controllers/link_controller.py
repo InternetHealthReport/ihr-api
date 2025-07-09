@@ -23,9 +23,9 @@ class LinkController:
         db: Session = Depends(get_db),
         timebin: Optional[datetime] = Query(
             None, description="Timestamp of reported value."),
-        timebin_gte: Optional[datetime] = Query(
+        timebin__gte: Optional[datetime] = Query(
             None, description="Timestamp of reported value."),
-        timebin_lte: Optional[datetime] = Query(
+        timebin__lte: Optional[datetime] = Query(
             None, description="Timestamp of reported value."),
         asn: Optional[str] = Query(
             None, description="ASN or IXP ID of the monitored network (see number in /network/). Can be a single value or a list of comma separated values."),
@@ -44,16 +44,16 @@ class LinkController:
         <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
         </ul>
         """
-        timebin_gte, timebin_lte = validate_timebin_params(
-            timebin, timebin_gte, timebin_lte)
+        timebin__gte, timebin__lte = validate_timebin_params(
+            timebin, timebin__gte, timebin__lte)
 
         # Convert comma-separated ASNs to list
         asn_list = [int(x.strip()) for x in asn.split(",")] if asn else None
 
         delays, total_count = LinkController.service.get_link_delays(
             db,
-            timebin_gte=timebin_gte,
-            timebin_lte=timebin_lte,
+            timebin_gte=timebin__gte,
+            timebin_lte=timebin__lte,
             asn_ids=asn_list,
             magnitude=magnitude,
             page=page,
@@ -78,9 +78,9 @@ class LinkController:
         db: Session = Depends(get_db),
         timebin: Optional[datetime] = Query(
             None, description="Timestamp of reported value."),
-        timebin_gte: Optional[datetime] = Query(
+        timebin__gte: Optional[datetime] = Query(
             None, description="Timestamp of reported value."),
-        timebin_lte: Optional[datetime] = Query(
+        timebin__lte: Optional[datetime] = Query(
             None, description="Timestamp of reported value."),
         asn: Optional[str] = Query(
             None, description="ASN or IXP ID of the monitored network (see number in /network/). Can be a single value or a list of comma separated values."),
@@ -102,16 +102,16 @@ class LinkController:
         <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
         </ul>
         """
-        timebin_gte, timebin_lte = validate_timebin_params(
-            timebin, timebin_gte, timebin_lte)
+        timebin__gte, timebin__lte = validate_timebin_params(
+            timebin, timebin__gte, timebin__lte)
 
         # Convert comma-separated ASNs to list
         asn_list = [int(x.strip()) for x in asn.split(",")] if asn else None
 
         forwardings, total_count = LinkController.service.get_link_forwardings(
             db,
-            timebin_gte=timebin_gte,
-            timebin_lte=timebin_lte,
+            timebin_gte=timebin__gte,
+            timebin_lte=timebin__lte,
             asn_ids=asn_list,
             magnitude=magnitude,
             page=page,

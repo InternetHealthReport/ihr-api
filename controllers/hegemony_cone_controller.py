@@ -22,9 +22,9 @@ class HegemonyConeController:
         db: Session = Depends(get_db),
         timebin: Optional[datetime] = Query(
             None, description="Get results for exact timestamp"),
-        timebin_gte: Optional[datetime] = Query(
+        timebin__gte: Optional[datetime] = Query(
             None, description="Get results after or equal to this timestamp"),
-        timebin_lte: Optional[datetime] = Query(
+        timebin__lte: Optional[datetime] = Query(
             None, description="Get results before or equal to this timestamp"),
         asn: Optional[str] = Query(
             None, description="Autonomous System Number (ASN). Can be a single value or a list of comma separated values."),
@@ -43,15 +43,15 @@ class HegemonyConeController:
          </ul>
          networks).
         """
-        timebin_gte, timebin_lte = validate_timebin_params(timebin, timebin_gte, timebin_lte)
+        timebin__gte, timebin__lte = validate_timebin_params(timebin, timebin__gte, timebin__lte)
 
         # Convert comma-separated ASNs to list
         asn_list = [int(x.strip()) for x in asn.split(",")] if asn else None
 
         cones, total_count = HegemonyConeController.service.get_hegemony_cones(
             db,
-            timebin_gte=timebin_gte,
-            timebin_lte=timebin_lte,
+            timebin_gte=timebin__gte,
+            timebin_lte=timebin__lte,
             asn_ids=asn_list,
             af=af,
             page=page,

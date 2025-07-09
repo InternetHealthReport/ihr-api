@@ -22,15 +22,15 @@ class MetisController:
         db: Session = Depends(get_db),
         timebin: Optional[datetime] = Query(
             None, description="Time when the ranking is computed. The ranking uses 24 weeks of data, hence 2022-05-23T00:00 means the ranking using data from 2021-12-06T00:00 to 2022-05-23T00:00."),
-        timebin_gte: Optional[datetime] = Query(
+        timebin__gte: Optional[datetime] = Query(
             None, description="Time when the ranking is computed. The ranking uses 24 weeks of data, hence 2022-05-23T00:00 means the ranking using data from 2021-12-06T00:00 to 2022-05-23T00:00."),
-        timebin_lte: Optional[datetime] = Query(
+        timebin__lte: Optional[datetime] = Query(
             None, description="Time when the ranking is computed. The ranking uses 24 weeks of data, hence 2022-05-23T00:00 means the ranking using data from 2021-12-06T00:00 to 2022-05-23T00:00."),
         rank: Optional[int] = Query(
             None, description="Selecting all ASes with rank less than equal to 10 (i.e. rank__lte=10), gives the 10 most diverse ASes in terms of the selected metric."),
-        rank_lte: Optional[int] = Query(
+        rank__lte: Optional[int] = Query(
             None, description="Selecting all ASes with rank less than equal to 10 (i.e. rank__lte=10), gives the 10 most diverse ASes in terms of the selected metric."),
-        rank_gte: Optional[int] = Query(
+        rank__gte: Optional[int] = Query(
             None, description="Selecting all ASes with rank less than equal to 10 (i.e. rank__lte=10), gives the 10 most diverse ASes in terms of the selected metric."),
         metric: Optional[str] = Query(
             None, description="Distance metric used to compute diversity, possible values are: 'as_path_length', 'ip_hops', 'rtt'"),
@@ -47,17 +47,17 @@ class MetisController:
         <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
         </ul>
         """
-        timebin_gte, timebin_lte = prepare_timebin_range(
-            timebin, timebin_gte, timebin_lte, max_days=31)
+        timebin__gte, timebin__lte = prepare_timebin_range(
+            timebin, timebin__gte, timebin__lte, max_days=31)
 
         deployments, total_count = MetisController.service.get_metis_atlas_deployments(
             db,
             timebin=timebin,
-            timebin_gte=timebin_gte,
-            timebin_lte=timebin_lte,
+            timebin_gte=timebin__gte,
+            timebin_lte=timebin__lte,
             rank=rank,
-            rank_lte=rank_lte,
-            rank_gte=rank_gte,
+            rank_lte=rank__lte,
+            rank_gte=rank__gte,
             metric=metric,
             af=af,
             page=page,
