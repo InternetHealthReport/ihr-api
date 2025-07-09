@@ -1,11 +1,14 @@
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, Query, Request, HTTPException
 from sqlalchemy.orm import Session
 from services.network_delay_service import NetworkDelayService
 from dtos.generic_response_dto import GenericResponseDTO, build_url
 from dtos.network_delay_locations_dto import NetworkDelayLocationsDTO
+from dtos.network_delay_dto import NetworkDelayDTO
 from config.database import get_db
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
 from globals import page_size
+from utils import *
 
 router = APIRouter(prefix="/network_delay", tags=["Network Delay"])
 
@@ -53,4 +56,103 @@ class NetworkDelayController:
             next=build_url(request, next_page),
             previous=build_url(request, prev_page),
             results=locations
+        )
+
+    @staticmethod
+    @router.get("/", response_model=GenericResponseDTO[NetworkDelayDTO])
+    async def get_network_delays(
+        request: Request,
+        db: Session = Depends(get_db),
+        timebin: Optional[datetime] = Query(
+            None,
+            description="Timestamp of reported value."
+        ),
+        timebin_gte: Optional[datetime] = Query(
+            None,
+            description="Timestamp of reported value."
+        ),
+        timebin_lte: Optional[datetime] = Query(
+            None,
+            description="Timestamp of reported value."
+        ),
+        startpoint_name: Optional[str] = Query(
+            None,
+            description="Starting location name. It can be a single value or a list of values separated by the pipe character (i.e. | ). The meaning of values dependend on the location type: <ul><li>type=AS: ASN</li><li>type=CT: city name, region name, country code</li><li>type=PB: Atlas Probe ID</li><li>type=IP: IP version (4 or 6)</li></ul> "
+        ),
+        endpoint_name: Optional[str] = Query(
+            None,
+            description="Ending location name. It can be a single value or a list of values separated by the pipe character (i.e. | ). The meaning of values dependend on the location type: <ul><li>type=AS: ASN</li><li>type=CT: city name, region name, country code</li><li>type=PB: Atlas Probe ID</li><li>type=IP: IP version (4 or 6)</li></ul> "
+        ),
+        startpoint_type: Optional[str] = Query(
+            None,
+            description="Type of starting location. Possible values are: <ul><li>AS: Autonomous System</li><li>CT: City</li><li>PB: Atlas Probe</li><li>IP: Whole IP space</li></ul>"
+        ),
+        endpoint_type: Optional[str] = Query(
+            None,
+            description="Type of ending location. Possible values are: <ul><li>AS: Autonomous System</li><li>CT: City</li><li>PB: Atlas Probe</li><li>IP: Whole IP space</li></ul>"
+        ),
+        startpoint_af: Optional[int] = Query(
+            None,
+            description="Address Family (IP version), values are either 4 or 6."
+        ),
+        endpoint_af: Optional[int] = Query(
+            None,
+            description="Address Family (IP version), values are either 4 or 6."
+        ),
+        startpoint_key: Optional[str] = Query(
+            None,
+            description="List of starting location key, separated by the pip character (i.e. | ). A location key is a concatenation of a type, af, and name. For example, CT4New York City, New York, US|AS4174 (yes, the last key corresponds to AS174!)."
+        ),
+        endpoint_key: Optional[str] = Query(
+            None,
+            description="List of ending location key, separated by the pip character (i.e. | ). A location key is a concatenation of a type, af, and name. For example, CT4New York City, New York, US|AS4174 (yes, the last key corresponds to AS174!)."
+        ),
+        median_gte: Optional[float] = Query(
+            None, description="Estimated median RTT. RTT values are directly extracted from traceroute (a.k.a. realrtts) and estimated via differential RTTs."),
+        median_lte: Optional[float] = Query(
+            None, description="Estimated median RTT. RTT values are directly extracted from traceroute (a.k.a. realrtts) and estimated via differential RTTs."),
+        median: Optional[float] = Query(
+            None, description="Estimated median RTT. RTT values are directly extracted from traceroute (a.k.a. realrtts) and estimated via differential RTTs."),
+        page: Optional[int] = Query(
+            1, ge=1, description="A page number within the paginated result set"),
+        ordering: Optional[str] = Query(
+            None, description="Which field to use when ordering the results.")
+    ) -> GenericResponseDTO[NetworkDelayDTO]:
+        """
+        List estimated network delays between two potentially remote locations. A location can be, for example, an AS, city, Atlas probe.
+        <ul>
+        <li><b>Required parameters:</b> timebin or a range of timebins (using the two parameters timebin__lte and timebin__gte).</li>
+        <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        </ul>
+        """
+        timebin_gte, timebin_lte = validate_timebin_params(
+            timebin, timebin_gte, timebin_lte)
+        delays, total_count = NetworkDelayController.service.get_network_delays(
+            db,
+            timebin=timebin,
+            timebin_gte=timebin_gte,
+            timebin_lte=timebin_lte,
+            startpoint_names=startpoint_name,
+            endpoint_names=endpoint_name,
+            startpoint_type=startpoint_type,
+            endpoint_type=endpoint_type,
+            startpoint_af=startpoint_af,
+            endpoint_af=endpoint_af,
+            median=median,
+            median_gte=median_gte,
+            median_lte=median_lte,
+            startpoint_key=startpoint_key,
+            endpoint_key=endpoint_key,
+            page=page,
+            order_by=ordering
+        )
+
+        next_page = page + 1 if (page * page_size) < total_count else None
+        prev_page = page - 1 if page > 1 else None
+
+        return GenericResponseDTO(
+            count=total_count,
+            next=build_url(request, next_page),
+            previous=build_url(request, prev_page),
+            results=delays
         )
