@@ -42,3 +42,11 @@ class AtlasDelayAlarms(Base):
     endpoint_id = Column(Integer,
                          nullable=False,
                          doc='Ending location reported as anomalous.')
+
+    startpoint_relation = relationship('AtlasLocation',
+                                primaryjoin='AtlasDelayAlarms.startpoint_id == AtlasLocation.id',
+                                foreign_keys=[startpoint_id])
+    
+    endpoint_relation = relationship('AtlasLocation',
+                            primaryjoin='AtlasDelayAlarms.endpoint_id == AtlasLocation.id',
+                            foreign_keys=[endpoint_id])
