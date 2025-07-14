@@ -10,7 +10,6 @@ from sqlalchemy.dialects.postgresql import TIMESTAMP
 class DelayAlarms(Base):
     __tablename__ = 'ihr_delay_alarms'
 
-
     __table_args__ = (
         PrimaryKeyConstraint('id', 'timebin'),
     )
@@ -72,9 +71,13 @@ class DelayAlarms(Base):
         default=None,
         doc='List of Atlas measurement IDs and probe IDs used to compute this alarm.'
     )
-    asn_id = Column(
+    asn = Column(
+        "asn_id",
         BigInteger,
         nullable=False,
         doc='ASN or IXPID of the reported network.'
     )
 
+    asn_relation = relationship('ASN',
+                                primaryjoin='DelayAlarms.asn == ASN.number',
+                                foreign_keys=[asn])
