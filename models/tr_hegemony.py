@@ -1,6 +1,7 @@
+from models.tr_hegemony_identifier import TRHegemonyIdentifier
 from sqlalchemy import Column, BigInteger, Integer, Float, ForeignKey, PrimaryKeyConstraint
 from sqlalchemy.dialects.postgresql import TIMESTAMP
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, foreign, remote
 from config.database import Base
 
 
@@ -8,7 +9,7 @@ class TRHegemony(Base):
     __tablename__ = 'ihr_tr_hegemony'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id','timebin'),
+        PrimaryKeyConstraint('id', 'timebin'),
     )
 
     __hypertable__ = {
@@ -49,4 +50,12 @@ class TRHegemony(Base):
                        nullable=False,
                        doc='Dependent network, it can be any public ASN. Retrieve all dependencies of a network by setting only this parameter and a timebin.')
 
-   
+    dependency_relation = relationship('TRHegemonyIdentifier',
+                                       primaryjoin=lambda: foreign(TRHegemony.dependency_id) == remote(
+                                           TRHegemonyIdentifier.id),
+                                       foreign_keys=[dependency_id])
+
+    origin_relation = relationship('TRHegemonyIdentifier',
+                                   primaryjoin=lambda: foreign(TRHegemony.origin_id) == remote(
+                                       TRHegemonyIdentifier.id),
+                                   foreign_keys=[origin_id])
