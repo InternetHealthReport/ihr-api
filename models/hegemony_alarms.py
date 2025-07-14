@@ -38,10 +38,18 @@ class HegemonyAlarms(Base):
     af = Column(Integer, nullable=False,
                 doc='Address Family (IP version), values are either 4 or 6.')
 
-    asn_id = Column(BigInteger,
-                    nullable=False,
-                    doc='ASN of the anomalous dependency (transit network).')
+    asn = Column('asn_id', BigInteger,
+                 nullable=False,
+                 doc='ASN of the anomalous dependency (transit network).')
 
-    originasn_id = Column(BigInteger,
+    originasn= Column('originasn_id',BigInteger,
                           nullable=False,
                           doc='ASN of the reported dependent network.')
+
+    asn_relation = relationship('ASN',
+                                primaryjoin='HegemonyAlarms.asn == ASN.number',
+                                foreign_keys=[asn])
+
+    originasn_relation = relationship('ASN',
+                                      primaryjoin='HegemonyAlarms.originasn == ASN.number',
+                                      foreign_keys=[originasn])
