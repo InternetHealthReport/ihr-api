@@ -3,6 +3,8 @@ from repositories.hegemony_cone_repository import HegemonyConeRepository
 from dtos.hegemony_cone_dto import HegemonyConeDTO
 from repositories.hegemony_alarms_repository import HegemonyAlarmsRepository
 from dtos.hegemony_alarms_dto import HegemonyAlarmsDTO
+from repositories.hegemony_country_repository import HegemonyCountryRepository
+from dtos.hegemony_country_dto import HegemonyCountryDTO
 from typing import Optional, List, Tuple
 from datetime import datetime
 
@@ -11,6 +13,7 @@ class HegemonyService:
     def __init__(self):
         self.hegemony_cone_repository = HegemonyConeRepository()
         self.hegemony_alarms_repository = HegemonyAlarmsRepository()
+        self.hegemony_country_repository = HegemonyCountryRepository()
 
     def get_hegemony_cones(
         self,
@@ -80,3 +83,50 @@ class HegemonyService:
             asn_name=alarm.asn_relation.name if alarm.asn_relation else None,
             originasn_name=alarm.originasn_relation.name if alarm.originasn_relation else None
         ) for alarm in alarms], total_count
+
+    def get_hegemony_countries(
+        self,
+        db: Session,
+        timebin_gte: Optional[datetime] = None,
+        timebin_lte: Optional[datetime] = None,
+        asn_ids: Optional[List[int]] = None,
+        countries: Optional[List[str]] = None,
+        af: Optional[int] = None,
+        weightscheme: Optional[str] = None,
+        transitonly: Optional[bool] = None,
+        hege: Optional[float] = None,
+        hege_gte: Optional[float] = None,
+        hege_lte: Optional[float] = None,
+        page: int = 1,
+        order_by: Optional[str] = None
+    ) -> Tuple[List[HegemonyCountryDTO], int]:
+        """
+        Get hegemony country data with filtering.
+        """
+        countries_data, total_count = self.hegemony_country_repository.get_all(
+            db,
+            timebin_gte=timebin_gte,
+            timebin_lte=timebin_lte,
+            asn_ids=asn_ids,
+            countries=countries,
+            af=af,
+            weightscheme=weightscheme,
+            transitonly=transitonly,
+            hege=hege,
+            hege_gte=hege_gte,
+            hege_lte=hege_lte,
+            page=page,
+            order_by=order_by
+        )
+
+        return [HegemonyCountryDTO(
+            timebin=country.timebin,
+            country=country.country,
+            asn=country.asn,
+            hege=country.hege,
+            af=country.af,
+            asn_name=country.asn_relation.name if country.asn_relation else None,
+            weight=country.weight,
+            weightscheme=country.weightscheme,
+            transitonly=country.transitonly
+        ) for country in countries_data], total_count

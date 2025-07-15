@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Float, String, Boolean, ForeignKey, BigInteger,PrimaryKeyConstraint
+from sqlalchemy import Column, Integer, Float, String, Boolean, ForeignKey, BigInteger, PrimaryKeyConstraint
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import relationship
 from config.database import Base
@@ -8,7 +8,7 @@ class HegemonyCountry(Base):
     __tablename__ = 'ihr_hegemony_country'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id','timebin'),
+        PrimaryKeyConstraint('id', 'timebin'),
     )
 
     __hypertable__ = {
@@ -47,12 +47,18 @@ class HegemonyCountry(Base):
     transitonly = Column(Boolean, default=False, nullable=False,
                          doc='If True, then origin ASNs of BGP path are ignored (focus only on transit networks).')
 
-    asn_id = Column(BigInteger,
-                    nullable=False,
-                    doc='Dependency. Network commonly seen in BGP paths towards monitored country.')
+    asn = Column('asn_id', BigInteger,
+                 nullable=False,
+                 doc='Dependency. Network commonly seen in BGP paths towards monitored country.')
 
-    country_id = Column(String(4),
-                        nullable=False,
-                        doc='Monitored country. Retrieve all dependencies of a country by setting only this parameter and a timebin.')
+    country = Column('country_id', String(4),
+                     nullable=False,
+                     doc='Monitored country. Retrieve all dependencies of a country by setting only this parameter and a timebin.')
 
- 
+    asn_relation = relationship('ASN',
+                                primaryjoin='HegemonyCountry.asn == ASN.number',
+                                foreign_keys=[asn])
+
+    country_relation = relationship('Country',
+                                      primaryjoin='HegemonyCountry.country == Country.code',
+                                      foreign_keys=[country])
