@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 from dotenv import load_dotenv
+import warnings
 
 # Load environment variables from .env file
 try:
@@ -11,10 +12,14 @@ except:
 
 # Read the database URL from the environment variable
 DATABASE_URL = os.getenv("DATABASE_URL")
-# Create the SQLAlchemy engine with the database URL
-engine = create_engine(DATABASE_URL)
-# Create a session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+if DATABASE_URL is not None:
+    # Create the SQLAlchemy engine with the database URL
+    engine = create_engine(DATABASE_URL)
+    # Create a session factory
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+else:
+    warnings.warn("DATABASE_URL is not configured in the ENV")
+
 # Base is the base class for all the SQLAlchemy ORM models.
 # It tells SQLAlchemy that a model maps to a real table.
 # Without inheriting from Base, the class won’t be recognized by SQLAlchemy’s ORM.
