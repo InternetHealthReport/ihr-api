@@ -1,12 +1,16 @@
-# IHR FastAPI App
+# IHR API
 
-This project is a FastAPI-based backend for the IHR system. It is designed for flexibility and can be run either in a **Python virtual environment** or using **Docker**.
+This project implements the IHR API, migrating from the [old API system](https://github.com/InternetHealthReport/ihr-django) to a more efficient architecture. It introduces a new database management system using [Alembic](https://alembic.sqlalchemy.org/en/latest/) and enhances the structure for creating new endpoints. The API is built on [FastAPI](https://fastapi.tiangolo.com/) and can be run in either a Python virtual environment or using Docker.
 
 ---
 
 ##  Getting Started
 
 ### 1. Clone the Repository
+
+```sh
+git clone https://github.com/InternetHealthReport/ihr-api.git
+```
 
 ### 2. Create a `.env` File
 
@@ -60,12 +64,6 @@ pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### **Step 4: Access the API**
-Once running, you can access:
-- API: **[http://localhost:8000](http://localhost:8000)**
-- Interactive Docs (Swagger UI): **[http://localhost:8000/docs](http://localhost:8000/docs)**
-- Redoc Docs: **[http://localhost:8000/redoc](http://localhost:8000/redoc)**
-
 ---
 
 ## Option 2: Run with Docker
@@ -73,13 +71,13 @@ Once running, you can access:
 ### Step 1: Build the Docker Image
 
 ```sh
-docker build -t ihr-fastapi .
+docker build -t ihr-api .
 ```
 
 ### Step 2: Run the Docker Container
 
 ```sh
-docker run -p 8000:8000 --env-file .env ihr-fastapi
+docker run -p 8000:8000 --env-file .env ihr-api
 ```
 
 ### (Optional) Step 3: Manage the Container
@@ -96,7 +94,7 @@ View logs:
 docker logs -f <container-id>
 ```
 
-### Step 4: Access the API
+## Access the API
 
 Once running, you can access:
 - API: **[http://localhost:8000](http://localhost:8000)**
