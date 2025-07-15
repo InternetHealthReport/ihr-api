@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, Float, Integer, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import Column, BigInteger, Float, Integer, PrimaryKeyConstraint
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import relationship
 from config.database import Base
@@ -47,13 +47,18 @@ class Hegemony(Base):
     af = Column(Integer, default=0, nullable=False,
                 doc='Address Family (IP version), values are either 4 or 6.')
 
-    asn_id = Column(BigInteger,
-                    nullable=False,
-                    doc='Dependency. Transit network commonly seen in BGP paths towards originasn.')
+    asn = Column('asn_id', BigInteger,
+                 nullable=False,
+                 doc='Dependency. Transit network commonly seen in BGP paths towards originasn.')
 
-    originasn_id = Column(BigInteger,
+    originasn = Column('originasn_id',BigInteger,
                           nullable=False,
                           doc='Dependent network, it can be any public ASN. Retrieve all dependencies of a network by setting only this parameter and a timebin.')
 
- 
-   
+    asn_relation = relationship('ASN',
+                                primaryjoin='Hegemony.asn == ASN.number',
+                                foreign_keys=[asn])
+
+    originasn_relation = relationship('ASN',
+                                      primaryjoin='Hegemony.originasn == ASN.number',
+                                      foreign_keys=[originasn])

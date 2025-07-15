@@ -1,4 +1,5 @@
 from dtos.hegemony_country_dto import HegemonyCountryDTO
+from dtos.hegemony_dto import HegemonyDTO
 from fastapi import APIRouter, Depends, Query, Request, Response, HTTPException, status
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
@@ -16,6 +17,81 @@ router = APIRouter(prefix="/hegemony", tags=["Hegemony"])
 
 class HegemonyController:
     service = HegemonyService()
+
+    @staticmethod
+    @router.get("/", response_model=GenericResponseDTO[HegemonyDTO])
+    async def get_hegemony(
+        request: Request,
+        db: Session = Depends(get_db),
+        timebin: Optional[datetime] = Query(
+            None, description="Timestamp of reported value."),
+        timebin__gte: Optional[datetime] = Query(
+            None, description="Timestamp of reported value."),
+        timebin__lte: Optional[datetime] = Query(
+            None, description="Timestamp of reported value."),
+        asn: Optional[str] = Query(
+            None, description="Dependency. Transit network commonly seen in BGP paths towards originasn. Can be a single value or a list of comma separated values."),
+        originasn: Optional[str] = Query(
+            None, description="Dependent network, it can be any public ASN. Can be a single value or a list of comma separated values. Retrieve all dependencies of a network by setting a single value and a timebin."),
+        af: Optional[int] = Query(
+            None, description="Address Family (IP version), values are either 4 or 6."),
+        hege: Optional[float] = Query(
+            None, description="AS Hegemony is the estimated fraction of paths towards the originasn. The values range between 0 and 1, low values represent a small number of path (low dependency) and values close to 1 represent strong dependencies."),
+        hege__gte: Optional[float] = Query(
+            None, description="AS Hegemony is the estimated fraction of paths towards the originasn. The values range between 0 and 1, low values represent a small number of path (low dependency) and values close to 1 represent strong dependencies."),
+        hege__lte: Optional[float] = Query(
+            None, description="AS Hegemony is the estimated fraction of paths towards the originasn. The values range between 0 and 1, low values represent a small number of path (low dependency) and values close to 1 represent strong dependencies."),
+        page: Optional[int] = Query(
+            1, ge=1, description="A page number within the paginated result set"),
+        ordering: Optional[str] = Query(
+            None, description="Which field to use when ordering the results")
+    ) -> GenericResponseDTO[HegemonyDTO]:
+        """
+        List AS dependencies for all ASes visible in monitored BGP data. This endpoint also provides the AS dependency to the entire IP space (a.k.a. global graph) which is available by setting the originasn parameter to 0.
+        <ul>
+        <li><b>Required parameters:</b> timebin or a range of timebins (using the two parameters timebin__lte and timebin__gte).</li>
+        <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        </ul>
+        """
+        timebin__gte, timebin__lte = validate_timebin_params(
+            timebin, timebin__gte, timebin__lte)
+
+        # Convert comma-separated ASNs to lists
+        asn_list = [int(x.strip()) for x in asn.split(",")] if asn else None
+        originasn_list = [int(x.strip())
+                          for x in originasn.split(",")] if originasn else None
+
+        # Ensure either asn or originasn is provided
+        if not asn and not originasn:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Required parameter missing. Please provide one of the following parameters: ['originasn', 'asn']"
+            )
+
+        hegemony_data, total_count = HegemonyController.service.get_hegemony(
+            db,
+            timebin_gte=timebin__gte,
+            timebin_lte=timebin__lte,
+            asn_ids=asn_list,
+            originasn_ids=originasn_list,
+            af=af,
+            hege=hege,
+            hege_gte=hege__gte,
+            hege_lte=hege__lte,
+            page=page,
+            order_by=ordering
+        )
+
+        # Calculate pagination
+        next_page = page + 1 if (page * page_size) < total_count else None
+        prev_page = page - 1 if page > 1 else None
+
+        return GenericResponseDTO(
+            count=total_count,
+            next=build_url(request, next_page),
+            previous=build_url(request, prev_page),
+            results=hegemony_data
+        )
 
     @staticmethod
     @router.get("/cones", response_model=GenericResponseDTO[HegemonyConeDTO])
