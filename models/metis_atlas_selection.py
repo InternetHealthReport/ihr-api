@@ -40,7 +40,12 @@ class MetisAtlasSelection(Base):
     mean = Column(Float, default=0.0, nullable=False,
                   doc='The mean distance value (e.g., AS-path length) we get when using all ASes up to this rank. This decreases with increasing rank, since lower ranks represent closer ASes.')
 
-    asn_id = Column(BigInteger,
+    asn = Column('asn_id',BigInteger,
                     nullable=False,
                     doc="Atlas probes' Autonomous System Number.")
+    
+    asn_relation = relationship('ASN',
+                            primaryjoin='MetisAtlasSelection.asn == ASN.number',
+                            foreign_keys=[asn],
+                            backref='metis_selections')
 

@@ -43,8 +43,11 @@ class MetisAtlasDeployment(Base):
     nbsamples = Column(Integer, default=0, nullable=False,
                        doc='The number of probe ASes for which we have traceroutes to this AS in the time interval. We currently only include candidates that were reached by at least 50% of probe ASes, hence these values are always large.')
 
-    asn_id = Column(BigInteger,
+    asn = Column('asn_id',BigInteger,
                     nullable=False,
                     doc="Atlas probes' Autonomous System Number.")
 
- 
+    asn_relation = relationship('ASN',
+                            primaryjoin='MetisAtlasDeployment.asn == ASN.number',
+                            foreign_keys=[asn],
+                            backref='metis_deployments')

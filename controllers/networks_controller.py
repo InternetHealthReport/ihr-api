@@ -22,9 +22,9 @@ class NetworksController:
             None, description="Search for a substring in networks name"),
         number: Optional[str] = Query(
             None, description="Search by ASN or IXP ID. It can be either a single value (e.g. 2497) or a list of comma separated values (e.g. 2497,2500,2501)"),
-        number_gte: Optional[int] = Query(
+        number__gte: Optional[int] = Query(
             None, description="Autonomous System Number (ASN) or IXP ID. Note that IXP ID are negative to avoid colision."),
-        number_lte: Optional[int] = Query(
+        number__lte: Optional[int] = Query(
             None, description="Autonomous System Number (ASN) or IXP ID. Note that IXP ID are negative to avoid colision."),
         search: Optional[str] = Query(
             None, description="Search for both ASN/IXPID and substring in names"),
@@ -44,8 +44,8 @@ class NetworksController:
             db,
             name=name,
             numbers=number_list,
-            number_gte=number_gte,
-            number_lte=number_lte,
+            number_gte=number__gte,
+            number_lte=number__lte,
             search=search,
             page=page,
             order_by=ordering

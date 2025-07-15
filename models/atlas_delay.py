@@ -68,3 +68,11 @@ class AtlasDelay(Base):
     endpoint_id = Column(Integer,
                          nullable=False,
                          doc='Ending location for the delay estimation.')
+    
+    startpoint_relation = relationship('AtlasLocation',
+                                primaryjoin='AtlasDelay.startpoint_id == AtlasLocation.id',
+                                foreign_keys=[startpoint_id])
+    
+    endpoint_relation = relationship('AtlasLocation',
+                            primaryjoin='AtlasDelay.endpoint_id == AtlasLocation.id',
+                            foreign_keys=[endpoint_id])

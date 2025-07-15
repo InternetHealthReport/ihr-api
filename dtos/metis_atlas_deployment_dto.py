@@ -2,10 +2,13 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
-class LinkDelayDTO(BaseModel):
+class MetisAtlasDeploymentDTO(BaseModel):
     timebin: datetime
+    metric: str
+    rank: int
     asn: int
-    magnitude: float
+    af: int
+    nbsamples: int
     asn_name: str
 
     class Config:
