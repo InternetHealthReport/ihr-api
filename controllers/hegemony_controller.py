@@ -1,5 +1,6 @@
 from dtos.hegemony_country_dto import HegemonyCountryDTO
 from dtos.hegemony_dto import HegemonyDTO
+from dtos.hegemony_prefix_dto import HegemonyPrefixDTO
 from fastapi import APIRouter, Depends, Query, Request, Response, HTTPException, status
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
@@ -292,4 +293,105 @@ class HegemonyController:
             next=build_url(request, next_page),
             previous=build_url(request, prev_page),
             results=countries
+        )
+
+    @staticmethod
+    @router.get("/prefixes", response_model=GenericResponseDTO[HegemonyPrefixDTO])
+    async def get_hegemony_prefixes(
+        request: Request,
+        db: Session = Depends(get_db),
+        timebin: Optional[datetime] = Query(
+            None, description="Timestamp of reported value."),
+        timebin__gte: Optional[datetime] = Query(
+            None, description="Timestamp of reported value."),
+        timebin__lte: Optional[datetime] = Query(
+            None, description="Timestamp of reported value."),
+        prefix: Optional[str] = Query(
+            None, description="Monitored prefix, it can be any globally reachable prefix. Can be a single value or a list of comma separated values."),
+        asn: Optional[str] = Query(
+            None, description="Dependency. Network commonly seen in BGP paths towards monitored prefix. Can be a single value or a list of comma separated values."),
+        originasn: Optional[str] = Query(
+            None, description="Origin network, it can be any public ASN. Can be a single value or a list of comma separated values."),
+        country: Optional[str] = Query(
+            None, description="Country code for prefixes as reported by Maxmind's Geolite2 geolocation database. Can be a single value or a list of comma separated values. Retrieve all dependencies of a country by setting a single value and a timebin."),
+        rpki_status: Optional[str] = Query(
+            None, description="Route origin validation state for the monitored prefix and origin AS using RPKI."),
+        irr_status: Optional[str] = Query(
+            None, description="Route origin validation state for the monitored prefix and origin AS using IRR."),
+        delegated_prefix_status: Optional[str] = Query(
+            None, description="Status of the monitored prefix in the RIR's delegated stats. Status other than 'assigned' are usually considered as bogons."),
+        delegated_asn_status: Optional[str] = Query(
+            None, description="Status of the origin ASN in the RIR's delegated stats. Status other than 'assigned' are usually considered as bogons."),
+        af: Optional[int] = Query(
+            None, description="Address Family (IP version), values are either 4 or 6."),
+        hege: Optional[float] = Query(
+            None, description="AS Hegemony is the estimated fraction of paths towards the monitored prefix. The values range between 0 and 1, low values represent a small number of path (low dependency) and values close to 1 represent strong dependencies."),
+        hege__gte: Optional[float] = Query(
+            None, description="AS Hegemony is the estimated fraction of paths towards the monitored prefix. The values range between 0 and 1, low values represent a small number of path (low dependency) and values close to 1 represent strong dependencies."),
+        hege__lte: Optional[float] = Query(
+            None, description="AS Hegemony is the estimated fraction of paths towards the monitored prefix. The values range between 0 and 1, low values represent a small number of path (low dependency) and values close to 1 represent strong dependencies."),
+        origin_only: Optional[bool] = Query(
+            None, description="Filter out dependency results and provide only prefix/origin ASN results"),
+        page: Optional[int] = Query(
+            1, ge=1, description="A page number within the paginated result set"),
+        ordering: Optional[str] = Query(
+            None, description="Which field to use when ordering the results")
+    ) -> GenericResponseDTO[HegemonyPrefixDTO]:
+        """
+        List AS dependencies of prefixes. 
+        <ul>
+        <li><b>Required parameters:</b> timebin or a range of timebins (using the two parameters timebin__lte and timebin__gte). And one of the following: prefix, originasn, country, rpki_status, irr_status, delegated_prefix_status, delegated_asn_status.</li>
+        <li><b>Limitations:</b> At most 3 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        </ul>
+        """
+        # Ensure at least one filter is provided
+        if not any([prefix, originasn, country, rpki_status, irr_status,
+                   delegated_prefix_status, delegated_asn_status]):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Required parameter missing. Please provide one of the following parameter: ['prefix', 'originasn', 'country', 'rpki_status', 'irr_status', 'delegated_prefix_status', 'delegated_asn_status']"
+            )
+
+        timebin__gte, timebin__lte = validate_timebin_params(
+            timebin, timebin__gte, timebin__lte, max_days=3)
+
+        # Convert comma-separated values to lists
+        prefix_list = [x.strip()
+                       for x in prefix.split(",")] if prefix else None
+        asn_list = [int(x.strip()) for x in asn.split(",")] if asn else None
+        originasn_list = [int(x.strip())
+                          for x in originasn.split(",")] if originasn else None
+        country_list = [x.strip()
+                        for x in country.split(",")] if country else None
+
+        prefixes, total_count = HegemonyController.service.get_hegemony_prefixes(
+            db,
+            timebin_gte=timebin__gte,
+            timebin_lte=timebin__lte,
+            prefixes=prefix_list,
+            asn_ids=asn_list,
+            originasn_ids=originasn_list,
+            countries=country_list,
+            rpki_status=rpki_status,
+            irr_status=irr_status,
+            delegated_prefix_status=delegated_prefix_status,
+            delegated_asn_status=delegated_asn_status,
+            af=af,
+            hege=hege,
+            hege_gte=hege__gte,
+            hege_lte=hege__lte,
+            origin_only=origin_only,
+            page=page,
+            order_by=ordering
+        )
+
+        # Calculate pagination
+        next_page = page + 1 if (page * page_size) < total_count else None
+        prev_page = page - 1 if page > 1 else None
+
+        return GenericResponseDTO(
+            count=total_count,
+            next=build_url(request, next_page),
+            previous=build_url(request, prev_page),
+            results=prefixes
         )
