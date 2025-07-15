@@ -8,6 +8,10 @@ This project implements the IHR API, migrating from the [old API system](https:/
 
 ### 1. Clone the Repository
 
+```sh
+git clone https://github.com/InternetHealthReport/ihr-api.git
+```
+
 ### 2. Create a `.env` File
 
 In the project root directory, create a new `.env` file to define your specific database connection string.
