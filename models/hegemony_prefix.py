@@ -8,7 +8,7 @@ class HegemonyPrefix(Base):
     __tablename__ = 'ihr_hegemony_prefix'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id','timebin'),
+        PrimaryKeyConstraint('id', 'timebin'),
     )
 
     __hypertable__ = {
@@ -62,7 +62,7 @@ class HegemonyPrefix(Base):
                                      doc="Status of the monitored prefix in the RIR's delegated stats. Status other than 'assigned' are usually considered as bogons.")
 
     delegated_asn_status = Column(String(32), nullable=False,
-                                   doc="Status of the origin ASN in the RIR's delegated stats. Status other than 'assigned' are usually considered as bogons.")
+                                  doc="Status of the origin ASN in the RIR's delegated stats. Status other than 'assigned' are usually considered as bogons.")
 
     descr = Column(String(64), nullable=False,
                    doc='Prefix description from IRR (maximum 64 characters).')
@@ -70,13 +70,26 @@ class HegemonyPrefix(Base):
     moas = Column(Boolean, default=False, nullable=False,
                   doc='True if the prefix is originated by multiple ASNs.')
 
-    asn_id = Column(BigInteger,
-                    nullable=False,
-                    doc='Dependency. Network commonly seen in BGP paths towards monitored prefix.')
-    originasn_id = Column(BigInteger,
-                          nullable=False,
-                          doc='Network seen as originating the monitored prefix.')
+    asn = Column('asn_id', BigInteger,
+                 nullable=False,
+                 doc='Dependency. Network commonly seen in BGP paths towards monitored prefix.')
 
-    country_id = Column(String(4),
-                        nullable=False,
-                        doc="Country for the monitored prefix identified by Maxmind's Geolite2 geolocation database.")
+    originasn = Column('originasn_id', BigInteger,
+                       nullable=False,
+                       doc='Network seen as originating the monitored prefix.')
+
+    country = Column('country_id', String(4),
+                     nullable=False,
+                     doc="Country for the monitored prefix identified by Maxmind's Geolite2 geolocation database.")
+
+    asn_relation = relationship('ASN',
+                                primaryjoin='HegemonyPrefix.asn == ASN.number',
+                                foreign_keys=[asn])
+
+    originasn_relation = relationship('ASN',
+                                      primaryjoin='HegemonyPrefix.originasn == ASN.number',
+                                      foreign_keys=[originasn])
+    
+    country_relation = relationship('Country',
+                                      primaryjoin='HegemonyPrefix.country == Country.code',
+                                      foreign_keys=[country])
