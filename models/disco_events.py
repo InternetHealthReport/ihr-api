@@ -3,6 +3,7 @@ from sqlalchemy import (
 )
 from config.database import Base
 from sqlalchemy.dialects.postgresql import TIMESTAMP
+from sqlalchemy.orm import relationship
 
 
 class DiscoEvents(Base):
@@ -15,7 +16,6 @@ class DiscoEvents(Base):
         'name': 'ihr_disco_events_streamtype_streamname_st_bda16df6_idx',
         'columns': ['streamtype', 'streamname', 'starttime', 'endtime']
     }]
-
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     mongoid = Column(
@@ -79,4 +79,6 @@ class DiscoEvents(Base):
         doc='Deprecated, this value is unused'
     )
 
-   
+    probes = relationship("DiscoProbes", back_populates="event_relation")
+
+from models.disco_probes import DiscoProbes
