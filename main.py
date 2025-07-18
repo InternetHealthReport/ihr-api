@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from controllers import __path__ as controllers_path
 
 description = """
-```[ Base URL: TBA ]```
+```[ Base URL: www.ihr.live/api ]```
 
 This RESTful API is intended for developers and researchers integrating IHR data to their workflow. API data is also available via our [Python library](https://www.ihr.live/ihr/en-us/documentation#Python_Library).
 
