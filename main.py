@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from controllers import __path__ as controllers_path
 
 description = """
-```[ Base URL: www.ihr.live/ihr/api ]```
+```[ Base URL: TBA ]```
 
 This RESTful API is intended for developers and researchers integrating IHR data to their workflow. API data is also available via our [Python library](https://www.ihr.live/ihr/en-us/documentation#Python_Library).
 
@@ -21,7 +21,7 @@ Parameters ending with __lte and __gte (acronyms for 'less than or equal to', an
 app = FastAPI(
     title="IHR API",
     description=description,
-    version="0.1.0"
+    version="v0.1"
 )
 
 # Automatically import and register all routers inside "controllers"
