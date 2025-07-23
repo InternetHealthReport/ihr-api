@@ -3,8 +3,10 @@ import pkgutil
 from fastapi import FastAPI
 from controllers import __path__ as controllers_path
 
-description = """
-```[ Base URL: www.ihr.live/api-dev ]```
+proxy_path = "api-dev"
+
+description = f"""
+```[ Base URL: www.ihr.live/{proxy_path} ]```
 
 This RESTful API is intended for developers and researchers integrating IHR data to their workflow. API data is also available via our [Python library](https://www.ihr.live/ihr/en-us/documentation#Python_Library).
 
@@ -21,7 +23,10 @@ Parameters ending with __lte and __gte (acronyms for 'less than or equal to', an
 app = FastAPI(
     title="IHR API",
     description=description,
-    version="0.2"
+    version="0.2",
+    docs_url=f"/{proxy_path}/docs",
+    openapi_url=f"/{proxy_path}/openapi.json",
+    redoc_url=None
 )
 
 # Automatically import and register all routers inside "controllers"
