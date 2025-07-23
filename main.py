@@ -23,9 +23,7 @@ Parameters ending with __lte and __gte (acronyms for 'less than or equal to', an
 app = FastAPI(
     title="IHR API",
     description=description,
-    version="0.3",
-    docs_url=f"/{proxy_path}/docs",
-    openapi_url=f"/{proxy_path}/openapi.json",
+    version="0.4",
     redoc_url=None
 )
 
