@@ -20,6 +20,7 @@ In the project root directory, create a new `.env` file to define your specific 
 
 ```env
 DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
+PROXY_PATH=api-dev
 ```
 
 
@@ -99,7 +100,6 @@ docker logs -f <container-id>
 Once running, you can access:
 - API: **[http://localhost:8000](http://localhost:8000)**
 - Interactive Docs (Swagger UI): **[http://localhost:8000/docs](http://localhost:8000/docs)**
-- Redoc Docs: **[http://localhost:8000/redoc](http://localhost:8000/redoc)**
 
 ---
 
