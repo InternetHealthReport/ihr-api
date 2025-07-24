@@ -30,7 +30,7 @@ def build_url(request: Request, page: Optional[int]) -> Optional[str]:
     query_params = dict(request.query_params)
     query_params["page"] = str(page)
     return urlunparse((
-        request.url.scheme,
+        request.headers.get("X-Forwarded-Proto", request.url.scheme),
         request.url.netloc if PROXY_PATH is None else f"{request.url.netloc}/{PROXY_PATH}",
         request.url.path,
         "",
