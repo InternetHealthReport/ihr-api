@@ -33,6 +33,8 @@ def build_url(request: Request, page: Optional[int]) -> Optional[str]:
     scheme = request.headers.get("cf-visitor", request.url.scheme)
     if "scheme" in scheme:
         scheme = ast.literal_eval(scheme)["scheme"]
+    else:
+        scheme = request.url.scheme
     return urlunparse((
         scheme,
         request.url.netloc if PROXY_PATH is None else f"{request.url.netloc}/{PROXY_PATH}",
