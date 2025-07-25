@@ -3,7 +3,16 @@ from datetime import datetime, timedelta, date
 from fastapi import HTTPException
 from datetime import datetime, timedelta
 from typing import Optional
+from dotenv import load_dotenv
+import os
 
+# Load environment variables from .env file
+try:
+    load_dotenv()
+except:
+    pass
+
+page_size = int(os.getenv("PAGE_SIZE"))
 
 def validate_timebin_params(
     timebin: Optional[datetime],

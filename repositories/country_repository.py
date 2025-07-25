@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from models.country import Country
 from typing import Optional, List, Tuple  # Added Tuple for return type
 from sqlalchemy import asc
-from globals import page_size
+from utils import page_size
 
 
 class CountryRepository:
@@ -27,7 +27,7 @@ class CountryRepository:
         if name:
             query = query.filter(Country.name.ilike(f"%{name}%"))
 
-        #Executes getting total count of countries
+        # Executes getting total count of countries
         total_count = query.count()
 
         # Apply ordering if specified

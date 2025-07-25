@@ -6,7 +6,7 @@ from dtos.tr_hegemony_dto import TRHegemonyDTO
 from config.database import get_db
 from typing import Optional
 from datetime import datetime
-from globals import page_size
+from utils import page_size
 from utils import prepare_timebin_range
 
 router = APIRouter(prefix="/tr_hegemony", tags=["TR Hegemony"])
@@ -59,7 +59,7 @@ class TRHegemonyController:
         """
         timebin__gte, timebin__lte = prepare_timebin_range(
             timebin, timebin__gte, timebin__lte, max_days=31)
-        
+
         hegemony_data, total_count = TRHegemonyController.service.get_tr_hegemony(
             db,
             timebin=timebin,

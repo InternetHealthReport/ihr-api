@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import or_,String
+from sqlalchemy import or_, String
 from models.asn import ASN
 from typing import Optional, List, Tuple
-from globals import page_size
+from utils import page_size
 
 
 class NetworksRepository:
@@ -47,7 +47,7 @@ class NetworksRepository:
         # Apply ordering
         if order_by and hasattr(ASN, order_by):
             query = query.order_by(getattr(ASN, order_by))
-     
+
         # Apply pagination
         offset = (page - 1) * page_size
         results = query.offset(offset).limit(page_size).all()

@@ -10,7 +10,7 @@ from dtos.hegemony_cone_dto import HegemonyConeDTO
 from dtos.hegemony_alarms_dto import HegemonyAlarmsDTO
 from config.database import get_db
 from typing import Optional, List
-from globals import page_size
+from utils import page_size
 from utils import *
 
 router = APIRouter(prefix="/hegemony", tags=["Hegemony"])

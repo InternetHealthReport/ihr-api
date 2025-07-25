@@ -8,7 +8,7 @@ from dtos.network_delay_alarms_dto import NetworkDelayAlarmsDTO
 from config.database import get_db
 from typing import Optional, List
 from datetime import datetime
-from globals import page_size
+from utils import page_size
 from utils import *
 
 router = APIRouter(prefix="/network_delay", tags=["Network Delay"])

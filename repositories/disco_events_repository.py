@@ -3,7 +3,7 @@ from sqlalchemy import and_
 from models.disco_events import DiscoEvents
 from datetime import datetime
 from typing import List, Optional, Tuple
-from globals import page_size
+from utils import page_size
 
 
 class DiscoEventsRepository:

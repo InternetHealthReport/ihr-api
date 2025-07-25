@@ -5,7 +5,7 @@ from services.networks_service import NetworksService
 from dtos.networks_dto import NetworksDTO
 from dtos.generic_response_dto import GenericResponseDTO, build_url
 from config.database import get_db
-from globals import page_size
+from utils import page_size
 
 router = APIRouter(prefix="/networks", tags=["Networks"])
 
@@ -28,7 +28,8 @@ class NetworksController:
             None, description="Autonomous System Number (ASN) or IXP ID. Note that IXP ID are negative to avoid colision."),
         search: Optional[str] = Query(
             None, description="Search for both ASN/IXPID and substring in names"),
-        page: Optional[int] = Query(1, ge=1, description="A page number within the paginated result set."),
+        page: Optional[int] = Query(
+            1, ge=1, description="A page number within the paginated result set."),
         ordering: Optional[str] = Query(
             None, description="Which field to use when ordering the results.")
     ) -> GenericResponseDTO[NetworksDTO]:

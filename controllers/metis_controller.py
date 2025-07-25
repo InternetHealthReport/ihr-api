@@ -7,7 +7,7 @@ from dtos.metis_atlas_deployment_dto import MetisAtlasDeploymentDTO
 from dtos.metis_atlas_selection_dto import MetisAtlasSelectionDTO
 from config.database import get_db
 from typing import Optional
-from globals import page_size
+from utils import page_size
 from utils import validate_timebin_params, prepare_timebin_range
 
 router = APIRouter(prefix="/metis/atlas", tags=["Metis"])
