@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from models.metis_atlas_deployment import MetisAtlasDeployment
 from typing import Optional, List, Tuple
-from globals import page_size
+from utils import page_size
 
 
 class MetisAtlasDeploymentRepository:
@@ -46,7 +46,7 @@ class MetisAtlasDeploymentRepository:
         # Apply ordering
         if order_by and hasattr(MetisAtlasDeployment, order_by):
             query = query.order_by(getattr(MetisAtlasDeployment, order_by))
-        
+
         # Apply pagination
         offset = (page - 1) * page_size
         results = query.offset(offset).limit(page_size).all()

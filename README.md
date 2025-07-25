@@ -14,13 +14,14 @@ git clone https://github.com/InternetHealthReport/ihr-api.git
 
 ### 2. Create a `.env` File
 
-In the project root directory, create a new `.env` file to define your specific database connection string.
+In the project root directory, create a new `.env` file to define your specific database connection string, proxy path and page size (number of results to return per page.).
 
 `.env` content:
 
 ```env
 DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
 PROXY_PATH=api-dev
+PAGE_SIZE = 100000 
 ```
 
 

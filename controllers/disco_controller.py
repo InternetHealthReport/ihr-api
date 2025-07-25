@@ -6,7 +6,7 @@ from dtos.disco_events_dto import DiscoEventsDTO
 from config.database import get_db
 from typing import Optional
 from datetime import datetime
-from globals import page_size
+from utils import page_size
 
 router = APIRouter(prefix="/disco", tags=["Disco"])
 
@@ -55,7 +55,8 @@ class DiscoController:
             None, description="Total number of Atlas probes active in the reported stream (ASN, Country, or geographical area)."),
         ongoing: Optional[str] = Query(
             None, description="Deprecated, this value is unused"),
-        page: Optional[int] = Query(1, ge=1, description="A page number within the paginated result set."),
+        page: Optional[int] = Query(
+            1, ge=1, description="A page number within the paginated result set."),
         ordering: Optional[str] = Query(
             None, description="Which field to use when ordering the results")
     ) -> GenericResponseDTO[DiscoEventsDTO]:

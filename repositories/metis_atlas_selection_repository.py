@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from models.metis_atlas_selection import MetisAtlasSelection
 from typing import Optional, List, Tuple
-from globals import page_size
+from utils import page_size
 
 
 class MetisAtlasSelectionRepository:

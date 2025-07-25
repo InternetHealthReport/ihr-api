@@ -18,7 +18,7 @@ This document provides an overview of the project's file and folder structure. E
 ├── .gitignore             # Specifies intentionally untracked files to ignore
 ├── alembic.ini            # Alembic configuration file
 ├── dockerfile             # Docker image instructions to build the app container
-├── globals.py             # Global constants
+├── utils.py               # Utils
 ├── main.py                # FastAPI entry point (starts the app)
 ├── README.md              # Project documentation 
 ├── requirements.txt       # Python dependencies list for pip installation

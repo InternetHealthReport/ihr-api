@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from models.atlas_location import AtlasLocation
 from typing import Optional, List, Tuple
-from globals import page_size
+from utils import page_size
 
 
 class AtlasLocationRepository:
@@ -29,7 +29,6 @@ class AtlasLocationRepository:
         # Apply ordering
         if order_by and hasattr(AtlasLocation, order_by):
             query = query.order_by(getattr(AtlasLocation, order_by))
-        
 
         # Apply pagination
         offset = (page - 1) * page_size

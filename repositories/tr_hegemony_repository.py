@@ -3,7 +3,7 @@ from sqlalchemy import and_, or_
 from models.tr_hegemony import TRHegemony
 from datetime import datetime
 from typing import List, Optional, Tuple
-from globals import page_size
+from utils import page_size
 
 
 class TRHegemonyRepository:

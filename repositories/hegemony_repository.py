@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from models.hegemony import Hegemony
 from typing import Optional, List, Tuple
-from globals import page_size
+from utils import page_size
 
 
 class HegemonyRepository:

@@ -5,7 +5,7 @@ from dtos.generic_response_dto import GenericResponseDTO, build_url
 from dtos.country_dto import CountryDTO
 from config.database import get_db
 from typing import Optional
-from globals import page_size
+from utils import page_size
 
 # Define a router for all endpoints under /countries
 router = APIRouter(prefix="/countries", tags=["Countries"])
@@ -29,7 +29,7 @@ class CountryController:
             None, description="Which field to use when ordering the results")
     ) -> GenericResponseDTO[CountryDTO]:
         """Retrieves paginated countries with optional filters."""
-       
+
         page = page or 1
         countries, total_count = CountryController.service.get_all_countries(
             db,
