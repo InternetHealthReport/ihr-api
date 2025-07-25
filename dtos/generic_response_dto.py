@@ -4,6 +4,7 @@ from urllib.parse import urlencode, urlunparse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
+import ast
 
 try:
     load_dotenv()
@@ -29,8 +30,13 @@ def build_url(request: Request, page: Optional[int]) -> Optional[str]:
         return None
     query_params = dict(request.query_params)
     query_params["page"] = str(page)
+    scheme = request.headers.get("cf-visitor", request.url.scheme)
+    if "scheme" in scheme:
+        scheme = ast.literal_eval(scheme)["scheme"]
+    else:
+        scheme = request.url.scheme
     return urlunparse((
-        request.url.scheme,
+        scheme,
         request.url.netloc if PROXY_PATH is None else f"{request.url.netloc}/{PROXY_PATH}",
         request.url.path,
         "",
