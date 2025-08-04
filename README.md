@@ -78,9 +78,19 @@ docker build -t ihr-api .
 
 ### Step 2: Run the Docker Container
 
+#### Using the local Docker Image
+
 ```sh
-docker run -p 8000:8000 --env-file .env ihr-api
+docker run --name ihr-api -p 8000:8000 -d --env-file .env ihr-api
 ```
+
+#### Using the Docker Hub
+
+```sh
+docker run --name ihr-api --env-file .env --restart unless-stopped -p 8000:8000 -d -t internethealthreport/ihr-api:v{v_number}
+```
+
+Where `v_number` is the version number.
 
 ### (Optional) Step 3: Manage the Container
 
