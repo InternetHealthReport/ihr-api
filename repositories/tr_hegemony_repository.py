@@ -4,6 +4,7 @@ from models.tr_hegemony import TRHegemony
 from datetime import datetime
 from typing import List, Optional, Tuple
 from utils import page_size
+from sqlalchemy import func
 
 
 class TRHegemonyRepository:
@@ -35,6 +36,11 @@ class TRHegemonyRepository:
             .join(Origin, TRHegemony.origin_relation)\
             .join(Dependency, TRHegemony.dependency_relation)
 
+        # If no time filters specified, get rows with max timebin
+        if not timebin and not timebin_gte and not timebin_lte:
+            max_timebin = db.query(func.max(TRHegemony.timebin)).scalar()
+            query = query.filter(TRHegemony.timebin == max_timebin)
+        
         if timebin:
             query = query.filter(TRHegemony.timebin == timebin)
         if timebin_gte:

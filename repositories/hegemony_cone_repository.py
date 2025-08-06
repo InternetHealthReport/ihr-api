@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from models.hegemony_cone import HegemonyCone
 from typing import Optional, List, Tuple
 from utils import page_size
+from sqlalchemy import func
 
 
 class HegemonyConeRepository:
@@ -18,6 +19,11 @@ class HegemonyConeRepository:
     ) -> Tuple[List[HegemonyCone], int]:
         query = db.query(HegemonyCone)
 
+        # If no time filters specified, get rows with max timebin
+        if not timebin_gte and not timebin_lte:
+            max_timebin = db.query(func.max(HegemonyCone.timebin)).scalar()
+            query = query.filter(HegemonyCone.timebin == max_timebin)
+        
         # Apply filters
         if timebin_gte:
             query = query.filter(HegemonyCone.timebin >= timebin_gte)

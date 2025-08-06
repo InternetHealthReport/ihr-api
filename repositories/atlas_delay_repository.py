@@ -4,6 +4,7 @@ from models.atlas_delay import AtlasDelay
 from datetime import datetime
 from typing import List, Optional, Tuple
 from utils import page_size
+from sqlalchemy import func
 
 
 class AtlasDelayRepository:
@@ -41,6 +42,12 @@ class AtlasDelayRepository:
             .join(Startpoint, AtlasDelay.startpoint_relation)\
             .join(Endpoint, AtlasDelay.endpoint_relation)
 
+
+        # If no time filters specified, get rows with max timebin
+        if not timebin and not timebin_gte and not timebin_lte:
+            max_timebin = db.query(func.max(AtlasDelay.timebin)).scalar()
+            query = query.filter(AtlasDelay.timebin == max_timebin)
+        
         # Apply timebin filters
         if timebin:
             query = query.filter(AtlasDelay.timebin == timebin)
