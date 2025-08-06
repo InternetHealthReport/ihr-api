@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from models.metis_atlas_deployment import MetisAtlasDeployment
 from typing import Optional, List, Tuple
 from utils import page_size
+from sqlalchemy import func
 
 
 class MetisAtlasDeploymentRepository:
@@ -23,6 +24,11 @@ class MetisAtlasDeploymentRepository:
         query = db.query(MetisAtlasDeployment).join(
             MetisAtlasDeployment.asn_relation)
 
+        # If no time filters specified, get rows with max timebin
+        if not timebin and not timebin_gte and not timebin_lte:
+            max_timebin = db.query(func.max(MetisAtlasDeployment.timebin)).scalar()
+            query = query.filter(MetisAtlasDeployment.timebin == max_timebin)
+        
         # Apply filters
         if timebin:
             query = query.filter(MetisAtlasDeployment.timebin == timebin)

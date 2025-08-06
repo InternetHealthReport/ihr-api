@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from models.hegemony_country import HegemonyCountry
 from typing import Optional, List, Tuple
 from utils import page_size
+from sqlalchemy import func
 
 
 class HegemonyCountryRepository:
@@ -23,6 +24,11 @@ class HegemonyCountryRepository:
         order_by: Optional[str] = None
     ) -> Tuple[List[HegemonyCountry], int]:
         query = db.query(HegemonyCountry)
+
+        # If no time filters specified, get rows with max timebin
+        if not timebin_gte and not timebin_lte:
+            max_timebin = db.query(func.max(HegemonyCountry.timebin)).scalar()
+            query = query.filter(HegemonyCountry.timebin == max_timebin)
 
         # Apply filters
         if timebin_gte:

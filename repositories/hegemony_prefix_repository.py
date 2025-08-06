@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from models.hegemony_prefix import HegemonyPrefix
 from typing import Optional, List, Tuple
 from utils import page_size
+from sqlalchemy import func
 
 
 class HegemonyPrefixRepository:
@@ -28,6 +29,11 @@ class HegemonyPrefixRepository:
         order_by: Optional[str] = None
     ) -> Tuple[List[HegemonyPrefix], int]:
         query = db.query(HegemonyPrefix)
+
+        # If no time filters specified, get rows with max timebin
+        if not timebin_gte and not timebin_lte:
+            max_timebin = db.query(func.max(HegemonyPrefix.timebin)).scalar()
+            query = query.filter(HegemonyPrefix.timebin == max_timebin)
 
         # Apply filters
         if timebin_gte:

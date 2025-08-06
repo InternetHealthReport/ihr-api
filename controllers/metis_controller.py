@@ -8,7 +8,7 @@ from dtos.metis_atlas_selection_dto import MetisAtlasSelectionDTO
 from config.database import get_db
 from typing import Optional
 from utils import page_size
-from utils import validate_timebin_params, prepare_timebin_range
+from utils import validate_timebin_params
 
 router = APIRouter(prefix="/metis/atlas", tags=["Metis"])
 
@@ -48,7 +48,7 @@ class MetisController:
         <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
         </ul>
         """
-        timebin__gte, timebin__lte = prepare_timebin_range(
+        timebin__gte, timebin__lte = validate_timebin_params(
             timebin, timebin__gte, timebin__lte, max_days=31)
 
         deployments, total_count = MetisController.service.get_metis_atlas_deployments(
@@ -108,7 +108,7 @@ class MetisController:
         <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
         </ul>
         """
-        timebin__gte, timebin__lte = prepare_timebin_range(
+        timebin__gte, timebin__lte = validate_timebin_params(
             timebin, timebin__gte, timebin__lte, max_days=31)
 
         selections, total_count = MetisController.service.get_metis_atlas_selections(
