@@ -21,6 +21,7 @@ In the project root directory, create a new `.env` file to define your specific 
 ```env
 DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
 PROXY_PATH=api-dev
+PAGE_SIZE=100000 
 ```
 
 
@@ -128,5 +129,4 @@ Details how to manage database migrations using Alembic, including TimescaleDB-s
 
 ### 4. [Adding a New Endpoint](docs/add_new_endpoint.md)
 A step-by-step guide on how to add a new endpoint to the application.
-
 
