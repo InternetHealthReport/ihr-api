@@ -7,7 +7,7 @@ from config.database import get_db
 from typing import Optional
 from datetime import datetime
 from utils import page_size
-from utils import prepare_timebin_range
+from utils import validate_timebin_params
 
 router = APIRouter(prefix="/tr_hegemony", tags=["TR Hegemony"])
 
@@ -57,7 +57,7 @@ class TRHegemonyController:
         <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
         </ul>
         """
-        timebin__gte, timebin__lte = prepare_timebin_range(
+        timebin__gte, timebin__lte = validate_timebin_params(
             timebin, timebin__gte, timebin__lte, max_days=31)
 
         hegemony_data, total_count = TRHegemonyController.service.get_tr_hegemony(

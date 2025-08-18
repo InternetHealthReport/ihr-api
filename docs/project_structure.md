@@ -6,14 +6,14 @@ This document provides an overview of the project's file and folder structure. E
 
 ```plaintext
 .
-├── alembic/               # Database migration scripts 
-├── config/                # App configuration
-├── controllers/           # API endpoints and HTTP route handlers (Controller Layer)
+├── alembic/               # [Alembic] Database migration scripts 
+├── config/                # [API] App configuration
+├── controllers/           # [API] API endpoints and HTTP route handlers (Controller Layer)
 ├── docs/                  # Documentation files
-├── dtos/                  # Data Transfer Objects for request/response schemas
-├── models/                # Database models and ORM classes (Model Layer)
-├── repositories/          # Data access logic and database interaction (Repository Layer)
-├── services/              # Business logic layer (Service Layer)
+├── dtos/                  # [API] Data Transfer Objects for request/response schemas
+├── models/                # [API & Alembic] Database models and ORM classes (Model Layer)
+├── repositories/          # [API] Data access logic and database interaction (Repository Layer)
+├── services/              # [API] Business logic layer (Service Layer)
 ├── .env                   # Environment variables (e.g., database credentials)
 ├── .gitignore             # Specifies intentionally untracked files to ignore
 ├── alembic.ini            # Alembic configuration file
