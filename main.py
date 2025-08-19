@@ -1,6 +1,7 @@
 import importlib
 import pkgutil
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from controllers import __path__ as controllers_path
 from dotenv import load_dotenv
 import os
@@ -31,8 +32,18 @@ app = FastAPI(
     root_path="" if PROXY_PATH is None else f"/{PROXY_PATH}",
     title="IHR API",
     description=description,
-    version="v1.1",
+    version="v1.2",
     redoc_url=None
+)
+
+origins = ["http://localhost", "http://www.ihr.live", "https://www.ihr.live"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Automatically import and register all routers inside "controllers"
