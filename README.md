@@ -20,7 +20,7 @@ In the project root directory, create a new `.env` file to define your specific 
 
 ```env
 DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
-PROXY_PATH=api-dev
+PROXY_PATH=ihr/api
 PAGE_SIZE=100000 
 ```
 
