@@ -32,18 +32,8 @@ app = FastAPI(
     root_path="" if PROXY_PATH is None else f"/{PROXY_PATH}",
     title="IHR API",
     description=description,
-    version="v1.2",
+    version="v1.3",
     redoc_url=None
-)
-
-origins = ["http://localhost", "http://www.ihr.live", "https://www.ihr.live"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 # Automatically import and register all routers inside "controllers"
@@ -51,3 +41,16 @@ for _, module_name, _ in pkgutil.iter_modules(controllers_path):
     module = importlib.import_module(f"controllers.{module_name}")
     if hasattr(module, "router"):
         app.include_router(module.router)
+
+origins = [
+    "http://localhost:5173",
+    "http://www.ihr.live",
+    "https://www.ihr.live"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
