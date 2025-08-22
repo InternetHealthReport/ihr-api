@@ -20,7 +20,7 @@ class HegemonyController:
     service = HegemonyService()
 
     @staticmethod
-    @router.get("", response_model=GenericResponseDTO[HegemonyDTO])
+    @router.get("/", response_model=GenericResponseDTO[HegemonyDTO])
     async def get_hegemony(
         request: Request,
         db: Session = Depends(get_db),
