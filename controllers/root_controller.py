@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
 
-router = APIRouter(prefix="/", tags=["Root"])
+router = APIRouter(prefix="", tags=["Root"])
 
 class RootController:
     @staticmethod
