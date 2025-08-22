@@ -60,7 +60,7 @@ class NetworkDelayController:
         )
 
     @staticmethod
-    @router.get("/", response_model=GenericResponseDTO[NetworkDelayDTO])
+    @router.get("", response_model=GenericResponseDTO[NetworkDelayDTO])
     async def get_network_delays(
         request: Request,
         db: Session = Depends(get_db),

@@ -32,7 +32,7 @@ app = FastAPI(
     root_path="" if PROXY_PATH is None else f"/{PROXY_PATH}",
     title="IHR API",
     description=description,
-    version="v1.6",
+    version="v1.7",
     redoc_url=None
 )
 

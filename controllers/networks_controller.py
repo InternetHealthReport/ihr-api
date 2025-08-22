@@ -14,7 +14,7 @@ class NetworksController:
     service = NetworksService()
 
     @staticmethod
-    @router.get("/", response_model=GenericResponseDTO[NetworksDTO])
+    @router.get("", response_model=GenericResponseDTO[NetworksDTO])
     async def get_networks(
         request: Request,
         db: Session = Depends(get_db),
