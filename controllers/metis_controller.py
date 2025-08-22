@@ -17,7 +17,7 @@ class MetisController:
     service = MetisService()
 
     @staticmethod
-    @router.get("/deployment", response_model=GenericResponseDTO[MetisAtlasDeploymentDTO])
+    @router.get("/deployment/", response_model=GenericResponseDTO[MetisAtlasDeploymentDTO])
     async def get_metis_atlas_deployments(
         request: Request,
         db: Session = Depends(get_db),
@@ -77,7 +77,7 @@ class MetisController:
         )
 
     @staticmethod
-    @router.get("/selection", response_model=GenericResponseDTO[MetisAtlasSelectionDTO])
+    @router.get("/selection/", response_model=GenericResponseDTO[MetisAtlasSelectionDTO])
     async def get_metis_atlas_selections(
         request: Request,
         db: Session = Depends(get_db),
