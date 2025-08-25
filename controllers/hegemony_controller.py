@@ -95,7 +95,7 @@ class HegemonyController:
         )
 
     @staticmethod
-    @router.get("/cones", response_model=GenericResponseDTO[HegemonyConeDTO])
+    @router.get("/cones/", response_model=GenericResponseDTO[HegemonyConeDTO])
     async def get_hegemony_cones(
         request: Request,
         db: Session = Depends(get_db),
@@ -150,7 +150,7 @@ class HegemonyController:
         )
 
     @staticmethod
-    @router.get("/alarms", response_model=GenericResponseDTO[HegemonyAlarmsDTO])
+    @router.get("/alarms/", response_model=GenericResponseDTO[HegemonyAlarmsDTO])
     async def get_hegemony_alarms(
         request: Request,
         db: Session = Depends(get_db),
@@ -215,7 +215,7 @@ class HegemonyController:
         )
 
     @staticmethod
-    @router.get("/countries", response_model=GenericResponseDTO[HegemonyCountryDTO])
+    @router.get("/countries/", response_model=GenericResponseDTO[HegemonyCountryDTO])
     async def get_hegemony_countries(
         request: Request,
         db: Session = Depends(get_db),
@@ -296,7 +296,7 @@ class HegemonyController:
         )
 
     @staticmethod
-    @router.get("/prefixes", response_model=GenericResponseDTO[HegemonyPrefixDTO])
+    @router.get("/prefixes/", response_model=GenericResponseDTO[HegemonyPrefixDTO])
     async def get_hegemony_prefixes(
         request: Request,
         db: Session = Depends(get_db),

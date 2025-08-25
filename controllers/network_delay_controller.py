@@ -18,7 +18,7 @@ class NetworkDelayController:
     service = NetworkDelayService()
 
     @staticmethod
-    @router.get("/locations", response_model=GenericResponseDTO[NetworkDelayLocationsDTO])
+    @router.get("/locations/", response_model=GenericResponseDTO[NetworkDelayLocationsDTO])
     async def get_network_delay_locations(
         request: Request,
         db: Session = Depends(get_db),
@@ -159,7 +159,7 @@ class NetworkDelayController:
         )
 
     @staticmethod
-    @router.get("/alarms", response_model=GenericResponseDTO[NetworkDelayAlarmsDTO])
+    @router.get("/alarms/", response_model=GenericResponseDTO[NetworkDelayAlarmsDTO])
     async def get_network_delay_alarms(
         request: Request,
         db: Session = Depends(get_db),
