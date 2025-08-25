@@ -36,16 +36,6 @@ app = FastAPI(
     redoc_url=None
 )
 
-origins = ["http://localhost", "http://www.ihr.live", "https://www.ihr.live"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # Automatically import and register all routers inside "controllers"
 for _, module_name, _ in pkgutil.iter_modules(controllers_path):
     module = importlib.import_module(f"controllers.{module_name}")
