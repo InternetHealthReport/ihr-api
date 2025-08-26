@@ -36,7 +36,6 @@ app = FastAPI(
     version="v1.11",
     docs_url=None,
     redoc_url=None,
-    redirect_slashes=False,
 )
 
 # Automatically import and register all routers inside "controllers"
@@ -53,6 +52,9 @@ def swagger_ui_html():
         title=app.title,
         swagger_js_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js",
         swagger_css_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css",
+        get_swagger_ui_html={
+            "defaultModelsExpandDepth": -1
+        }
     )
 
 origins = [
