@@ -2,6 +2,7 @@ import importlib
 import pkgutil
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_swagger_ui_html
 from controllers import __path__ as controllers_path
 from dotenv import load_dotenv
 import os
@@ -33,6 +34,7 @@ app = FastAPI(
     title="IHR API",
     description=description,
     version="v1.11",
+    docs_url=None,
     redoc_url=None,
     redirect_slashes=False,
 )
@@ -42,6 +44,16 @@ for _, module_name, _ in pkgutil.iter_modules(controllers_path):
     module = importlib.import_module(f"controllers.{module_name}")
     if hasattr(module, "router"):
         app.include_router(module.router)
+
+@app.get("/docs", include_in_schema=False)
+@app.get("/docs/", include_in_schema=False)
+def swagger_ui_html():
+    return get_swagger_ui_html(
+        openapi_url=app.openapi_url,
+        title=app.title,
+        swagger_js_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js",
+        swagger_css_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css",
+    )
 
 origins = [
     "http://localhost:5173",
