@@ -33,9 +33,9 @@ app = FastAPI(
     root_path="" if PROXY_PATH is None else f"/{PROXY_PATH}",
     title="IHR API",
     description=description,
-    version="v1.11",
-    docs_url=None,
+    version="v1.12",
     redoc_url=None,
+    swagger_ui_parameters={ "defaultModelsExpandDepth": -1 }
 )
 
 # Automatically import and register all routers inside "controllers"
@@ -43,19 +43,6 @@ for _, module_name, _ in pkgutil.iter_modules(controllers_path):
     module = importlib.import_module(f"controllers.{module_name}")
     if hasattr(module, "router"):
         app.include_router(module.router)
-
-@app.get("/docs", include_in_schema=False)
-@app.get("/docs/", include_in_schema=False)
-def swagger_ui_html():
-    return get_swagger_ui_html(
-        openapi_url=app.openapi_url,
-        title=app.title,
-        swagger_js_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js",
-        swagger_css_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css",
-        swagger_ui_parameters={
-            "defaultModelsExpandDepth": -1
-        }
-    )
 
 origins = [
     "http://localhost:5173",
