@@ -10,10 +10,10 @@ except:
 
 PROXY_PATH = os.getenv("PROXY_PATH")
 
-router = APIRouter(prefix="", tags=["Root"])
+router = APIRouter(prefix="/", tags=["Root"])
 
 class RootController:
     @staticmethod
-    @router.get("/", include_in_schema=False)
+    @router.get("", include_in_schema=False)
     def get_all_countries():
         return RedirectResponse(url="/docs" if PROXY_PATH is None else f"/{PROXY_PATH}/docs")

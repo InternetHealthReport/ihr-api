@@ -16,6 +16,7 @@ class TRHegemonyController:
     service = TRHegemonyService()
 
     @staticmethod
+    @router.get("", response_model=GenericResponseDTO[TRHegemonyDTO])
     @router.get("/", response_model=GenericResponseDTO[TRHegemonyDTO])
     async def get_hegemony(
         request: Request,
@@ -54,7 +55,7 @@ class TRHegemonyController:
         """
         List AS and IXP dependencies for all ASes visible in monitored traceroute data.
         <ul>
-        <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://archive.ihr.live/" target="_blank">https://archive.ihr.live/</a>.</li>
         </ul>
         """
         timebin__gte, timebin__lte = validate_timebin_params(

@@ -17,6 +17,7 @@ class MetisController:
     service = MetisService()
 
     @staticmethod
+    @router.get("/deployment", response_model=GenericResponseDTO[MetisAtlasDeploymentDTO])
     @router.get("/deployment/", response_model=GenericResponseDTO[MetisAtlasDeploymentDTO])
     async def get_metis_atlas_deployments(
         request: Request,
@@ -45,7 +46,7 @@ class MetisController:
         """
         Metis identifies ASes that are far from Atlas probes. Deploying Atlas probes in these ASes would be beneficial for Atlas coverage.
         <ul>
-        <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://archive.ihr.live/" target="_blank">https://archive.ihr.live/</a>.</li>
         </ul>
         """
         timebin__gte, timebin__lte = validate_timebin_params(
@@ -77,6 +78,7 @@ class MetisController:
         )
 
     @staticmethod
+    @router.get("/selection", response_model=GenericResponseDTO[MetisAtlasSelectionDTO])
     @router.get("/selection/", response_model=GenericResponseDTO[MetisAtlasSelectionDTO])
     async def get_metis_atlas_selections(
         request: Request,
@@ -105,7 +107,7 @@ class MetisController:
         """
         Metis helps to select a set of diverse Atlas probes in terms of different topological metrics. (e.g. AS path, RTT)
         <ul>
-        <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://archive.ihr.live/" target="_blank">https://archive.ihr.live/</a>.</li>
         </ul>
         """
         timebin__gte, timebin__lte = validate_timebin_params(

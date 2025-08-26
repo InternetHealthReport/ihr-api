@@ -20,6 +20,7 @@ class HegemonyController:
     service = HegemonyService()
 
     @staticmethod
+    @router.get("", response_model=GenericResponseDTO[HegemonyDTO])
     @router.get("/", response_model=GenericResponseDTO[HegemonyDTO])
     async def get_hegemony(
         request: Request,
@@ -51,7 +52,7 @@ class HegemonyController:
         List AS dependencies for all ASes visible in monitored BGP data. This endpoint also provides the AS dependency to the entire IP space (a.k.a. global graph) which is available by setting the originasn parameter to 0.
         <ul>
         <li><b>Required parameters:</b> timebin or a range of timebins (using the two parameters timebin__lte and timebin__gte).</li>
-        <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://archive.ihr.live/" target="_blank">https://archive.ihr.live/</a>.</li>
         </ul>
         """
         timebin__gte, timebin__lte = validate_timebin_params(
@@ -95,6 +96,7 @@ class HegemonyController:
         )
 
     @staticmethod
+    @router.get("/cones", response_model=GenericResponseDTO[HegemonyConeDTO])
     @router.get("/cones/", response_model=GenericResponseDTO[HegemonyConeDTO])
     async def get_hegemony_cones(
         request: Request,
@@ -118,7 +120,7 @@ class HegemonyController:
          The number of networks that depend on a given network. This is similar to CAIDA's customer cone size.
          <ul>
          <li><b>Required parameters:</b> timebin or a range of timebins (using the two parameters timebin__lte and timebin__gte).</li>
-         <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+         <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://archive.ihr.live/" target="_blank">https://archive.ihr.live/</a>.</li>
          </ul>
          networks).
         """
@@ -150,6 +152,7 @@ class HegemonyController:
         )
 
     @staticmethod
+    @router.get("/alarms", response_model=GenericResponseDTO[HegemonyAlarmsDTO])
     @router.get("/alarms/", response_model=GenericResponseDTO[HegemonyAlarmsDTO])
     async def get_hegemony_alarms(
         request: Request,
@@ -179,7 +182,7 @@ class HegemonyController:
         List significant AS dependency changes detected by IHR anomaly detector.
         <ul>
         <li><b>Required parameters:</b> timebin or a range of timebins (using the two parameters timebin__lte and timebin__gte).</li>
-        <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://archive.ihr.live/" target="_blank">https://archive.ihr.live/</a>.</li>
         </ul>
         """
         timebin__gte, timebin__lte = validate_timebin_params(
@@ -215,6 +218,7 @@ class HegemonyController:
         )
 
     @staticmethod
+    @router.get("/countries", response_model=GenericResponseDTO[HegemonyCountryDTO])
     @router.get("/countries/", response_model=GenericResponseDTO[HegemonyCountryDTO])
     async def get_hegemony_countries(
         request: Request,
@@ -250,7 +254,7 @@ class HegemonyController:
         List AS dependencies of countries. A country infrastructure is defined by its ASes registed in RIRs delegated files. Emphasis can be put on eyeball users with the eyeball weighting scheme (i.e. weightscheme='eyeball').
         <ul>
         <li><b>Required parameters:</b> timebin or a range of timebins (using the two parameters timebin__lte and timebin__gte).</li>
-        <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        <li><b>Limitations:</b> At most 31 days of data can be fetched per request. For bulk downloads see: <a href="https://archive.ihr.live/" target="_blank">https://archive.ihr.live/</a>.</li>
         </ul>
         """
         timebin__gte, timebin__lte = validate_timebin_params(
@@ -296,6 +300,7 @@ class HegemonyController:
         )
 
     @staticmethod
+    @router.get("/prefixes", response_model=GenericResponseDTO[HegemonyPrefixDTO])
     @router.get("/prefixes/", response_model=GenericResponseDTO[HegemonyPrefixDTO])
     async def get_hegemony_prefixes(
         request: Request,
@@ -341,7 +346,7 @@ class HegemonyController:
         List AS dependencies of prefixes. 
         <ul>
         <li><b>Required parameters:</b> timebin or a range of timebins (using the two parameters timebin__lte and timebin__gte). And one of the following: prefix, originasn, country, rpki_status, irr_status, delegated_prefix_status, delegated_asn_status.</li>
-        <li><b>Limitations:</b> At most 3 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        <li><b>Limitations:</b> At most 3 days of data can be fetched per request. For bulk downloads see: <a href="https://archive.ihr.live/" target="_blank">https://archive.ihr.live/</a>.</li>
         </ul>
         """
         # Ensure at least one filter is provided

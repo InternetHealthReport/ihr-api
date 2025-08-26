@@ -15,6 +15,7 @@ class DiscoController:
     service = DiscoService()
 
     @staticmethod
+    @router.get("/events", response_model=GenericResponseDTO[DiscoEventsDTO])
     @router.get("/events/", response_model=GenericResponseDTO[DiscoEventsDTO])
     async def get_events(
         request: Request,
