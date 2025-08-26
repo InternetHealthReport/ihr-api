@@ -2,7 +2,6 @@ import importlib
 import pkgutil
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.docs import get_swagger_ui_html
 from controllers import __path__ as controllers_path
 from dotenv import load_dotenv
 import os
