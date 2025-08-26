@@ -14,6 +14,6 @@ router = APIRouter(prefix="", tags=["Root"])
 
 class RootController:
     @staticmethod
-    @router.get("/", include_in_schema=False)
+    @router.get("/", include_in_schema=False, redirect_slashes=True)
     def get_all_countries():
         return RedirectResponse(url="/docs" if PROXY_PATH is None else f"/{PROXY_PATH}/docs")
