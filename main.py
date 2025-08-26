@@ -52,7 +52,7 @@ def swagger_ui_html():
         title=app.title,
         swagger_js_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js",
         swagger_css_url="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css",
-        get_swagger_ui_html={
+        swagger_ui_parameters={
             "defaultModelsExpandDepth": -1
         }
     )
