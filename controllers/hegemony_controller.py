@@ -21,7 +21,7 @@ class HegemonyController:
 
     @staticmethod
     @router.get("", response_model=GenericResponseDTO[HegemonyDTO])
-    @router.get("/", response_model=GenericResponseDTO[HegemonyDTO])
+    @router.get("/", response_model=GenericResponseDTO[HegemonyDTO], include_in_schema=False)
     async def get_hegemony(
         request: Request,
         db: Session = Depends(get_db),
@@ -97,7 +97,7 @@ class HegemonyController:
 
     @staticmethod
     @router.get("/cones", response_model=GenericResponseDTO[HegemonyConeDTO])
-    @router.get("/cones/", response_model=GenericResponseDTO[HegemonyConeDTO])
+    @router.get("/cones/", response_model=GenericResponseDTO[HegemonyConeDTO], include_in_schema=False)
     async def get_hegemony_cones(
         request: Request,
         db: Session = Depends(get_db),
@@ -153,7 +153,7 @@ class HegemonyController:
 
     @staticmethod
     @router.get("/alarms", response_model=GenericResponseDTO[HegemonyAlarmsDTO])
-    @router.get("/alarms/", response_model=GenericResponseDTO[HegemonyAlarmsDTO])
+    @router.get("/alarms/", response_model=GenericResponseDTO[HegemonyAlarmsDTO], include_in_schema=False)
     async def get_hegemony_alarms(
         request: Request,
         db: Session = Depends(get_db),
@@ -219,7 +219,7 @@ class HegemonyController:
 
     @staticmethod
     @router.get("/countries", response_model=GenericResponseDTO[HegemonyCountryDTO])
-    @router.get("/countries/", response_model=GenericResponseDTO[HegemonyCountryDTO])
+    @router.get("/countries/", response_model=GenericResponseDTO[HegemonyCountryDTO], include_in_schema=False)
     async def get_hegemony_countries(
         request: Request,
         db: Session = Depends(get_db),
@@ -301,7 +301,7 @@ class HegemonyController:
 
     @staticmethod
     @router.get("/prefixes", response_model=GenericResponseDTO[HegemonyPrefixDTO])
-    @router.get("/prefixes/", response_model=GenericResponseDTO[HegemonyPrefixDTO])
+    @router.get("/prefixes/", response_model=GenericResponseDTO[HegemonyPrefixDTO], include_in_schema=False)
     async def get_hegemony_prefixes(
         request: Request,
         db: Session = Depends(get_db),

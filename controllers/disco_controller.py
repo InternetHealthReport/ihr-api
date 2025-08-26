@@ -16,7 +16,7 @@ class DiscoController:
 
     @staticmethod
     @router.get("/events", response_model=GenericResponseDTO[DiscoEventsDTO])
-    @router.get("/events/", response_model=GenericResponseDTO[DiscoEventsDTO])
+    @router.get("/events/", response_model=GenericResponseDTO[DiscoEventsDTO], include_in_schema=False)
     async def get_events(
         request: Request,
         db: Session = Depends(get_db),

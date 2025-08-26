@@ -17,7 +17,7 @@ class TRHegemonyController:
 
     @staticmethod
     @router.get("", response_model=GenericResponseDTO[TRHegemonyDTO])
-    @router.get("/", response_model=GenericResponseDTO[TRHegemonyDTO])
+    @router.get("/", response_model=GenericResponseDTO[TRHegemonyDTO], include_in_schema=False)
     async def get_hegemony(
         request: Request,
         db: Session = Depends(get_db),

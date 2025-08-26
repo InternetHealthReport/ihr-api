@@ -15,7 +15,7 @@ class NetworksController:
 
     @staticmethod
     @router.get("", response_model=GenericResponseDTO[NetworksDTO])
-    @router.get("/", response_model=GenericResponseDTO[NetworksDTO])
+    @router.get("/", response_model=GenericResponseDTO[NetworksDTO], include_in_schema=False)
     async def get_networks(
         request: Request,
         db: Session = Depends(get_db),
