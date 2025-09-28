@@ -15,7 +15,8 @@ class CountryController:
     service = CountryService()
 
     @staticmethod
-    @router.get("/", response_model=GenericResponseDTO[CountryDTO])
+    @router.get("", response_model=GenericResponseDTO[CountryDTO])
+    @router.get("/", response_model=GenericResponseDTO[CountryDTO], include_in_schema=False)
     def get_all_countries(
         request: Request,
         db: Session = Depends(get_db),

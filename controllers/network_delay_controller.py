@@ -18,7 +18,8 @@ class NetworkDelayController:
     service = NetworkDelayService()
 
     @staticmethod
-    @router.get("/locations/", response_model=GenericResponseDTO[NetworkDelayLocationsDTO])
+    @router.get("/locations", response_model=GenericResponseDTO[NetworkDelayLocationsDTO])
+    @router.get("/locations/", response_model=GenericResponseDTO[NetworkDelayLocationsDTO], include_in_schema=False)
     async def get_network_delay_locations(
         request: Request,
         db: Session = Depends(get_db),
@@ -60,7 +61,8 @@ class NetworkDelayController:
         )
 
     @staticmethod
-    @router.get("/", response_model=GenericResponseDTO[NetworkDelayDTO])
+    @router.get("", response_model=GenericResponseDTO[NetworkDelayDTO])
+    @router.get("/", response_model=GenericResponseDTO[NetworkDelayDTO], include_in_schema=False)
     async def get_network_delays(
         request: Request,
         db: Session = Depends(get_db),
@@ -123,7 +125,7 @@ class NetworkDelayController:
         List estimated network delays between two potentially remote locations. A location can be, for example, an AS, city, Atlas probe.
         <ul>
         <li><b>Required parameters:</b> timebin or a range of timebins (using the two parameters timebin__lte and timebin__gte).</li>
-        <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://archive.ihr.live/" target="_blank">https://archive.ihr.live/</a>.</li>
         </ul>
         """
         timebin__gte, timebin__lte = validate_timebin_params(
@@ -159,7 +161,8 @@ class NetworkDelayController:
         )
 
     @staticmethod
-    @router.get("/alarms/", response_model=GenericResponseDTO[NetworkDelayAlarmsDTO])
+    @router.get("/alarms", response_model=GenericResponseDTO[NetworkDelayAlarmsDTO])
+    @router.get("/alarms/", response_model=GenericResponseDTO[NetworkDelayAlarmsDTO], include_in_schema=False)
     async def get_network_delay_alarms(
         request: Request,
         db: Session = Depends(get_db),
@@ -228,7 +231,7 @@ class NetworkDelayController:
         List significant network delay changes detected by IHR anomaly detector.
         <ul>
         <li><b>Required parameters:</b> timebin or a range of timebins (using the two parameters timebin__lte and timebin__gte).</li>
-        <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://ihr-archive.iijlab.net/" target="_blank">https://ihr-archive.iijlab.net/</a>.</li>
+        <li><b>Limitations:</b> At most 7 days of data can be fetched per request. For bulk downloads see: <a href="https://archive.ihr.live/" target="_blank">https://archive.ihr.live/</a>.</li>
         </ul>
         """
         timebin__gte, timebin__lte = validate_timebin_params(

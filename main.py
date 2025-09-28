@@ -18,7 +18,7 @@ description = f"""
 
 This RESTful API is intended for developers and researchers integrating IHR data to their workflow. API data is also available via our [Python library](https://www.ihr.live/ihr/en-us/documentation#Python_Library).
 
-**For bulk downloads please use: [https://ihr-archive.iijlab.net/](https://ihr-archive.iijlab.net/)**
+**For bulk downloads please use: [https://archive.ihr.live/](https://archive.ihr.live/)**
 
 Parameters ending with __lte and __gte (acronyms for 'less than or equal to', and, 'greater than or equal to') are used for selecting a range of values.
 
@@ -32,8 +32,9 @@ app = FastAPI(
     root_path="" if PROXY_PATH is None else f"/{PROXY_PATH}",
     title="IHR API",
     description=description,
-    version="v1.10",
-    redoc_url=None
+    version="v1.12",
+    redoc_url=None,
+    swagger_ui_parameters={ "defaultModelsExpandDepth": -1 }
 )
 
 # Automatically import and register all routers inside "controllers"
@@ -51,6 +52,6 @@ origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_methods=["*"],
+    allow_methods=["GET"],
     allow_headers=["*"],
 )
