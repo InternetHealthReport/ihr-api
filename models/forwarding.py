@@ -8,7 +8,7 @@ class Forwarding(Base):
     __tablename__ = 'ihr_forwarding'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id', 'timebin'),
+        PrimaryKeyConstraint('timebin','id'),
     )
 
     __hypertable__ = {

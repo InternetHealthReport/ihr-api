@@ -100,7 +100,7 @@ def create_hypertable_ops(table_name, hypertable_meta, is_existing=False):
 
     # Create hypertable SQL
     hypertable_sql = (
-        f"SELECT create_hypertable('{table_name}', by_range('{time_col}', INTERVAL '{chunk_interval}'));"
+        f"SELECT create_hypertable('{table_name}', by_range('{time_col}', INTERVAL '{chunk_interval}'),create_default_indexes => false);"
     )
 
     upgrade_ops.append(ops.ExecuteSQLOp(hypertable_sql))

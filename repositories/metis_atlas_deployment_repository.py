@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, contains_eager
 from models.metis_atlas_deployment import MetisAtlasDeployment
 from typing import Optional, List, Tuple
 from utils import page_size
@@ -21,8 +21,9 @@ class MetisAtlasDeploymentRepository:
         page: int = 1,
         order_by: Optional[str] = None
     ) -> Tuple[List[MetisAtlasDeployment], int]:
-        query = db.query(MetisAtlasDeployment).join(
-            MetisAtlasDeployment.asn_relation)
+        query = db.query(MetisAtlasDeployment)\
+            .join(MetisAtlasDeployment.asn_relation)\
+            .options(contains_eager(MetisAtlasDeployment.asn_relation))
 
         # If no time filters specified, get rows with max timebin
         if not timebin and not timebin_gte and not timebin_lte:

@@ -8,7 +8,7 @@ class Delay(Base):
     __tablename__ = 'ihr_delay'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id', 'timebin'),
+        PrimaryKeyConstraint('timebin','id'),
     )
 
     __hypertable__ = {

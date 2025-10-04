@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, contains_eager, aliased
 from models.hegemony import Hegemony
 from typing import Optional, List, Tuple
 from utils import page_size
@@ -21,8 +21,18 @@ class HegemonyRepository:
         page: int = 1,
         order_by: Optional[str] = None
     ) -> Tuple[List[Hegemony], int]:
-        query = db.query(Hegemony)
-
+        
+        ASN = aliased(Hegemony.asn_relation.property.mapper.class_)
+        OriginASN = aliased(Hegemony.originasn_relation.property.mapper.class_)
+        
+        query = db.query(Hegemony)\
+                .join(ASN, Hegemony.asn_relation)\
+                .join(OriginASN, Hegemony.originasn_relation)\
+                .options(   
+                    contains_eager(Hegemony.asn_relation, alias=ASN),
+                    contains_eager(Hegemony.originasn_relation, alias=OriginASN)
+                )
+        
         # If no time filters specified, get rows with max timebin
         if not timebin_gte and not timebin_lte:
             max_timebin = db.query(func.max(Hegemony.timebin)).scalar()

@@ -9,7 +9,7 @@ class HegemonyCone(Base):
     __tablename__ = 'ihr_hegemonycone'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id', 'timebin'),
+        PrimaryKeyConstraint('timebin','id'),
     )
 
     __indexes__ = [

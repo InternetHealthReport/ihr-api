@@ -10,7 +10,7 @@ class AtlasDelay(Base):
     __tablename__ = 'ihr_atlas_delay'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id', 'timebin'),
+        PrimaryKeyConstraint('timebin','id'),
     )
 
     __hypertable__ = {

@@ -7,7 +7,7 @@ class AtlasLocation(Base):
     __indexes__ = [
         {
             'name': 'ihr_atlas_location_af_name_type_idx',
-            'columns': ['af', 'name','type'],
+            'columns': ['af','type'],
         },]
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(
