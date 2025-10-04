@@ -8,7 +8,7 @@ class HegemonyCountry(Base):
     __tablename__ = 'ihr_hegemony_country'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id', 'timebin'),
+        PrimaryKeyConstraint('timebin','id'),
     )
 
     __hypertable__ = {

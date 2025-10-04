@@ -9,7 +9,7 @@ class TRHegemony(Base):
     __tablename__ = 'ihr_tr_hegemony'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id', 'timebin'),
+        PrimaryKeyConstraint('timebin','id'),
     )
 
     __hypertable__ = {
