@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import Session, aliased, contains_eager
 from sqlalchemy import and_, or_
 from models.tr_hegemony import TRHegemony
 from datetime import datetime
@@ -34,7 +34,11 @@ class TRHegemonyRepository:
 
         query = db.query(TRHegemony)\
             .join(Origin, TRHegemony.origin_relation)\
-            .join(Dependency, TRHegemony.dependency_relation)
+            .join(Dependency, TRHegemony.dependency_relation)\
+            .options(
+                contains_eager(TRHegemony.origin_relation, alias=Origin),
+                contains_eager(TRHegemony.dependency_relation, alias=Dependency)
+            )
 
         # If no time filters specified, get rows with max timebin
         if not timebin and not timebin_gte and not timebin_lte:

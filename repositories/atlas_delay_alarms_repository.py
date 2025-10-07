@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import Session, aliased, contains_eager
 from sqlalchemy import and_, or_
 from models.atlas_delay_alarms import AtlasDelayAlarms
 from datetime import datetime
@@ -37,7 +37,11 @@ class AtlasDelayAlarmsRepository:
 
         query = db.query(AtlasDelayAlarms)\
             .join(Startpoint, AtlasDelayAlarms.startpoint_relation)\
-            .join(Endpoint, AtlasDelayAlarms.endpoint_relation)
+            .join(Endpoint, AtlasDelayAlarms.endpoint_relation)\
+            .options(   
+                    contains_eager(AtlasDelayAlarms.startpoint_relation, alias=Startpoint),
+                    contains_eager(AtlasDelayAlarms.endpoint_relation, alias=Endpoint)
+                )
 
 
         # If no time filters specified, get rows with max timebin

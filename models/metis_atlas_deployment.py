@@ -8,7 +8,7 @@ class MetisAtlasDeployment(Base):
     __tablename__ = 'ihr_metis_atlas_deployment'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id','timebin'),
+        PrimaryKeyConstraint('timebin','id'),
     )
 
     __hypertable__ = {

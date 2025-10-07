@@ -8,7 +8,7 @@ class ForwardingAlarms(Base):
     __tablename__ = 'ihr_forwarding_alarms'
 
     __table_args__ = (
-        PrimaryKeyConstraint('id', 'timebin'),
+        PrimaryKeyConstraint('timebin','id'),
     )
 
     __indexes__ = [
