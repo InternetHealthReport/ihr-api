@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class NetworksDTO(BaseModel):
@@ -8,8 +8,7 @@ class NetworksDTO(BaseModel):
     delay_forwarding: bool
     disco: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
     @staticmethod
     def from_model(asn):

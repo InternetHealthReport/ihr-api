@@ -1,5 +1,5 @@
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import and_
+from sqlalchemy.orm import Session, joinedload, noload
+from sqlalchemy import select, func
 from models.disco_events import DiscoEvents
 from datetime import datetime
 from typing import List, Optional, Tuple
@@ -28,63 +28,67 @@ class DiscoEventsRepository:
         totalprobes_gte: Optional[int] = None,
         totalprobes_lte: Optional[int] = None,
         ongoing: Optional[str] = None,
+        include_probe_details: bool = False,
         page: int = 1,
         order_by: Optional[str] = None
     ) -> Tuple[List[DiscoEvents], int]:
 
-        query = db.query(DiscoEvents)
+        # Build conditions as a list so the count query can reuse them without
+        # the joinedload option (which would expand rows and give a wrong count).
+        conditions = []
 
         if streamname:
-            query = query.filter(DiscoEvents.streamname == streamname)
+            conditions.append(DiscoEvents.streamname == streamname)
         if streamtype:
-            query = query.filter(DiscoEvents.streamtype == streamtype)
+            conditions.append(DiscoEvents.streamtype == streamtype)
 
         if starttime:
-            query = query.filter(DiscoEvents.starttime == starttime)
+            conditions.append(DiscoEvents.starttime == starttime)
         if starttime_gte:
-            query = query.filter(DiscoEvents.starttime >= starttime_gte)
+            conditions.append(DiscoEvents.starttime >= starttime_gte)
         if starttime_lte:
-            query = query.filter(DiscoEvents.starttime <= starttime_lte)
+            conditions.append(DiscoEvents.starttime <= starttime_lte)
 
         if endtime:
-            query = query.filter(DiscoEvents.endtime == endtime)
+            conditions.append(DiscoEvents.endtime == endtime)
         if endtime_gte:
-            query = query.filter(DiscoEvents.endtime >= endtime_gte)
+            conditions.append(DiscoEvents.endtime >= endtime_gte)
         if endtime_lte:
-            query = query.filter(DiscoEvents.endtime <= endtime_lte)
+            conditions.append(DiscoEvents.endtime <= endtime_lte)
 
         if avglevel:
-            query = query.filter(DiscoEvents.avglevel == avglevel)
+            conditions.append(DiscoEvents.avglevel == avglevel)
         if avglevel_gte:
-            query = query.filter(DiscoEvents.avglevel >= avglevel_gte)
+            conditions.append(DiscoEvents.avglevel >= avglevel_gte)
         if avglevel_lte:
-            query = query.filter(DiscoEvents.avglevel <= avglevel_lte)
+            conditions.append(DiscoEvents.avglevel <= avglevel_lte)
 
         if nbdiscoprobes:
-            query = query.filter(DiscoEvents.nbdiscoprobes == nbdiscoprobes)
+            conditions.append(DiscoEvents.nbdiscoprobes == nbdiscoprobes)
         if nbdiscoprobes_gte:
-            query = query.filter(
-                DiscoEvents.nbdiscoprobes >= nbdiscoprobes_gte)
+            conditions.append(DiscoEvents.nbdiscoprobes >= nbdiscoprobes_gte)
         if nbdiscoprobes_lte:
-            query = query.filter(
-                DiscoEvents.nbdiscoprobes <= nbdiscoprobes_lte)
+            conditions.append(DiscoEvents.nbdiscoprobes <= nbdiscoprobes_lte)
 
         if totalprobes:
-            query = query.filter(DiscoEvents.totalprobes == totalprobes)
+            conditions.append(DiscoEvents.totalprobes == totalprobes)
         if totalprobes_gte:
-            query = query.filter(DiscoEvents.totalprobes >= totalprobes_gte)
+            conditions.append(DiscoEvents.totalprobes >= totalprobes_gte)
         if totalprobes_lte:
-            query = query.filter(DiscoEvents.totalprobes <= totalprobes_lte)
+            conditions.append(DiscoEvents.totalprobes <= totalprobes_lte)
 
         if ongoing:
-            query = query.filter(DiscoEvents.ongoing == ongoing)
+            conditions.append(DiscoEvents.ongoing == ongoing)
 
-        total_count = query.count()
+        total_count = db.scalar(select(func.count(DiscoEvents.id)).where(*conditions))
+
+        load_opt = joinedload(DiscoEvents.probes) if include_probe_details else noload(DiscoEvents.probes)
+        stmt = select(DiscoEvents).where(*conditions).options(load_opt)
 
         if order_by and hasattr(DiscoEvents, order_by):
-            query = query.order_by(getattr(DiscoEvents, order_by))
+            stmt = stmt.order_by(getattr(DiscoEvents, order_by))
 
         offset = (page - 1) * page_size
-        results = query.offset(offset).limit(page_size).all()
+        results = db.scalars(stmt.offset(offset).limit(page_size)).unique().all()
 
         return results, total_count

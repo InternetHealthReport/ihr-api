@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 from services.disco_service import DiscoService
 from dtos.generic_response_dto import GenericResponseDTO, build_url
@@ -56,15 +56,23 @@ class DiscoController:
             None, description="Total number of Atlas probes active in the reported stream (ASN, Country, or geographical area)."),
         ongoing: Optional[str] = Query(
             None, description="Deprecated, this value is unused"),
+        include_probe_details: bool = Query(
+            False, description="Include per-probe details in the response."),
         page: Optional[int] = Query(
             1, ge=1, description="A page number within the paginated result set."),
         ordering: Optional[str] = Query(
             None, description="Which field to use when ordering the results")
     ) -> GenericResponseDTO[DiscoEventsDTO]:
         """
-        List network disconnections detected with RIPE Atlas. 
+        List network disconnections detected with RIPE Atlas.
         These events have different levels of granularity - it can be at a network level (AS), city, or country level.
         """
+
+        if not any([starttime, starttime__gte, starttime__lte, endtime, endtime__gte, endtime__lte]):
+            raise HTTPException(
+                status_code=400,
+                detail="At least one time parameter is required: starttime, starttime__gte, starttime__lte, endtime, endtime__gte, or endtime__lte."
+            )
 
         events_data, total_count = DiscoController.service.get_disco_events(
             db,
@@ -86,6 +94,7 @@ class DiscoController:
             totalprobes_gte=totalprobes__gte,
             totalprobes_lte=totalprobes__lte,
             ongoing=ongoing,
+            include_probe_details=include_probe_details,
             page=page,
             order_by=ordering
         )

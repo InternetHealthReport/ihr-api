@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
@@ -14,8 +14,7 @@ class TRHegemonyDTO(BaseModel):
     af: int
     nbsamples: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
     @staticmethod
     def from_model(tr_hegemony):

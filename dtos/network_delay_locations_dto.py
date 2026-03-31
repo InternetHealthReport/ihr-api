@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class NetworkDelayLocationsDTO(BaseModel):
@@ -6,5 +6,4 @@ class NetworkDelayLocationsDTO(BaseModel):
     name: str
     af: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

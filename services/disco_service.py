@@ -30,6 +30,7 @@ class DiscoService:
         totalprobes_gte: Optional[int] = None,
         totalprobes_lte: Optional[int] = None,
         ongoing: Optional[str] = None,
+        include_probe_details: bool = False,
         page: int = 1,
         order_by: Optional[str] = None
     ) -> Tuple[List[DiscoEventsDTO], int]:
@@ -54,8 +55,9 @@ class DiscoService:
             totalprobes_gte=totalprobes_gte,
             totalprobes_lte=totalprobes_lte,
             ongoing=ongoing,
+            include_probe_details=include_probe_details,
             page=page,
             order_by=order_by
         )
 
-        return [DiscoEventsDTO.from_model(event) for event in events_data], total_count
+        return [DiscoEventsDTO.from_model(event, include_probe_details=include_probe_details) for event in events_data], total_count
