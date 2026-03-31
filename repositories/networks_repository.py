@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, String
+from sqlalchemy import select, func, or_, String
 from models.asn import ASN
 from typing import Optional, List, Tuple
 from utils import page_size
@@ -17,17 +17,17 @@ class NetworksRepository:
         page: int = 1,
         order_by: Optional[str] = None
     ) -> Tuple[List[ASN], int]:
-        query = db.query(ASN)
+        stmt = select(ASN)
 
         # Apply filters
         if name:
-            query = query.filter(ASN.name.ilike(f"%{name}%"))
+            stmt = stmt.where(ASN.name.ilike(f"%{name}%"))
         if numbers:
-            query = query.filter(ASN.number.in_(numbers))
+            stmt = stmt.where(ASN.number.in_(numbers))
         if number_gte:
-            query = query.filter(ASN.number >= number_gte)
+            stmt = stmt.where(ASN.number >= number_gte)
         if number_lte:
-            query = query.filter(ASN.number <= number_lte)
+            stmt = stmt.where(ASN.number <= number_lte)
         if search:
             # Handle AS/IX prefix in search
             search_value = search
@@ -36,20 +36,19 @@ class NetworksRepository:
                     search_value = str(int(search[2:]))
                 except ValueError:
                     pass
-
-            query = query.filter(or_(
+            stmt = stmt.where(or_(
                 ASN.number.cast(String).contains(search_value),
                 ASN.name.ilike(f"%{search}%")
             ))
 
-        total_count = query.count()
+        total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
         # Apply ordering
         if order_by and hasattr(ASN, order_by):
-            query = query.order_by(getattr(ASN, order_by))
+            stmt = stmt.order_by(getattr(ASN, order_by))
 
         # Apply pagination
         offset = (page - 1) * page_size
-        results = query.offset(offset).limit(page_size).all()
+        results = db.scalars(stmt.offset(offset).limit(page_size)).all()
 
         return results, total_count

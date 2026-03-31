@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
@@ -17,8 +17,7 @@ class NetworkDelayDTO(BaseModel):
     hop: int
     nbrealrtts: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
     @staticmethod
     def from_model(atlasDelay):

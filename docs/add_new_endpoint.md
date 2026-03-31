@@ -19,6 +19,55 @@ Create a service file in the `services/` directory or modify an existing one. Th
 ### 3. **Create the Repository**
 Add a repository file in the `repositories/` directory or modify an existing one. Ensure it handles pagination and ordering using `offset` and `limit`.
 
+Use the SQLAlchemy 2.0 `select()` style — **not** the legacy `db.query()` API.
+
+Example:
+```python
+# filepath: repositories/new_entity_repository.py
+from sqlalchemy.orm import Session
+from sqlalchemy import select, func
+from models.new_entity_model import NewEntity
+from typing import Optional, List, Tuple
+from utils import page_size
+
+
+class NewEntityRepository:
+    def get_all(
+        self,
+        db: Session,
+        field1: Optional[str] = None,
+        page: int = 1,
+        order_by: Optional[str] = None,
+    ) -> Tuple[List[NewEntity], int]:
+        stmt = select(NewEntity)
+
+        if field1:
+            stmt = stmt.where(NewEntity.field1 == field1)
+
+        total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
+
+        if order_by and hasattr(NewEntity, order_by):
+            stmt = stmt.order_by(getattr(NewEntity, order_by))
+
+        offset = (page - 1) * page_size
+        results = db.scalars(stmt.offset(offset).limit(page_size)).all()
+
+        return results, total_count
+```
+
+If the model has a relationship that needs to be loaded eagerly alongside the main query, use `contains_eager` with `of_type()`:
+```python
+from sqlalchemy.orm import contains_eager, aliased
+
+RelatedModel = aliased(NewEntity.related_relation.property.mapper.class_)
+stmt = (
+    select(NewEntity)
+    .join(NewEntity.related_relation.of_type(RelatedModel))
+    .options(contains_eager(NewEntity.related_relation.of_type(RelatedModel)))
+)
+# then add .where() clauses and call db.scalars(...).unique().all()
+```
+
 ---
 
 ### 4. **Define the Model**
@@ -88,14 +137,13 @@ Add a DTO in the `dtos/` directory to define the structure of the response.
 Example:
 ```python
 # filepath: dtos/new_entity_dto.py
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class NewEntityDTO(BaseModel):
     field1: str
     field2: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 ```
 ---
 

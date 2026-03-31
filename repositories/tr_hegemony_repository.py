@@ -1,10 +1,9 @@
 from sqlalchemy.orm import Session, aliased, contains_eager
-from sqlalchemy import and_, or_
+from sqlalchemy import select, func, and_, or_
 from models.tr_hegemony import TRHegemony
 from datetime import datetime
 from typing import List, Optional, Tuple
 from utils import page_size
-from sqlalchemy import func
 
 
 class TRHegemonyRepository:
@@ -27,63 +26,62 @@ class TRHegemonyRepository:
         page: int = 1,
         order_by: Optional[str] = None
     ) -> Tuple[List[TRHegemony], int]:
-
         Origin = aliased(TRHegemony.origin_relation.property.mapper.class_)
-        Dependency = aliased(
-            TRHegemony.dependency_relation.property.mapper.class_)
+        Dependency = aliased(TRHegemony.dependency_relation.property.mapper.class_)
 
-        query = db.query(TRHegemony)\
-            .join(Origin, TRHegemony.origin_relation)\
-            .join(Dependency, TRHegemony.dependency_relation)\
+        stmt = (
+            select(TRHegemony)
+            .join(TRHegemony.origin_relation.of_type(Origin))
+            .join(TRHegemony.dependency_relation.of_type(Dependency))
             .options(
-                contains_eager(TRHegemony.origin_relation, alias=Origin),
-                contains_eager(TRHegemony.dependency_relation, alias=Dependency)
+                contains_eager(TRHegemony.origin_relation.of_type(Origin)),
+                contains_eager(TRHegemony.dependency_relation.of_type(Dependency))
             )
+        )
 
         # If no time filters specified, get rows with max timebin
         if not timebin and not timebin_gte and not timebin_lte:
-            max_timebin = db.query(func.max(TRHegemony.timebin)).scalar()
-            query = query.filter(TRHegemony.timebin == max_timebin)
-        
+            max_timebin = db.scalar(select(func.max(TRHegemony.timebin)))
+            stmt = stmt.where(TRHegemony.timebin == max_timebin)
+
         if timebin:
-            query = query.filter(TRHegemony.timebin == timebin)
+            stmt = stmt.where(TRHegemony.timebin == timebin)
         if timebin_gte:
-            query = query.filter(TRHegemony.timebin >= timebin_gte)
+            stmt = stmt.where(TRHegemony.timebin >= timebin_gte)
         if timebin_lte:
-            query = query.filter(TRHegemony.timebin <= timebin_lte)
+            stmt = stmt.where(TRHegemony.timebin <= timebin_lte)
 
         if origin_names:
             names = origin_names.split('|')
-            query = query.filter(Origin.name.in_(names))
+            stmt = stmt.where(Origin.name.in_(names))
         if origin_type:
-            query = query.filter(Origin.type == origin_type)
+            stmt = stmt.where(Origin.type == origin_type)
         if origin_af:
-            query = query.filter(Origin.af == origin_af)
+            stmt = stmt.where(Origin.af == origin_af)
 
         if dependency_names:
             names = dependency_names.split('|')
-            query = query.filter(Dependency.name.in_(names))
+            stmt = stmt.where(Dependency.name.in_(names))
         if dependency_type:
-            query = query.filter(Dependency.type == dependency_type)
+            stmt = stmt.where(Dependency.type == dependency_type)
         if dependency_af:
-            query = query.filter(Dependency.af == dependency_af)
+            stmt = stmt.where(Dependency.af == dependency_af)
 
         if hege:
-            query = query.filter(TRHegemony.hege == hege)
+            stmt = stmt.where(TRHegemony.hege == hege)
         if hege_gte:
-            query = query.filter(TRHegemony.hege >= hege_gte)
+            stmt = stmt.where(TRHegemony.hege >= hege_gte)
         if hege_lte:
-            query = query.filter(TRHegemony.hege <= hege_lte)
-
+            stmt = stmt.where(TRHegemony.hege <= hege_lte)
         if af:
-            query = query.filter(TRHegemony.af == af)
+            stmt = stmt.where(TRHegemony.af == af)
 
-        total_count = query.count()
+        total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
         if order_by and hasattr(TRHegemony, order_by):
-            query = query.order_by(getattr(TRHegemony, order_by))
+            stmt = stmt.order_by(getattr(TRHegemony, order_by))
 
         offset = (page - 1) * page_size
-        results = query.offset(offset).limit(page_size).all()
+        results = db.scalars(stmt.offset(offset).limit(page_size)).unique().all()
 
         return results, total_count

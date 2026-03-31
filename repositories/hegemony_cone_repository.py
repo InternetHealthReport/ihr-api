@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
+from sqlalchemy import select, func
 from models.hegemony_cone import HegemonyCone
 from typing import Optional, List, Tuple
 from utils import page_size
-from sqlalchemy import func
 
 
 class HegemonyConeRepository:
@@ -17,33 +17,33 @@ class HegemonyConeRepository:
         page: int = 1,
         order_by: Optional[str] = None
     ) -> Tuple[List[HegemonyCone], int]:
-        query = db.query(HegemonyCone)
+        stmt = select(HegemonyCone)
 
         # If no time filters specified, get rows with max timebin
         if not timebin_gte and not timebin_lte:
-            max_timebin = db.query(func.max(HegemonyCone.timebin)).scalar()
-            query = query.filter(HegemonyCone.timebin == max_timebin)
-        
+            max_timebin = db.scalar(select(func.max(HegemonyCone.timebin)))
+            stmt = stmt.where(HegemonyCone.timebin == max_timebin)
+
         # Apply filters
         if timebin_gte:
-            query = query.filter(HegemonyCone.timebin >= timebin_gte)
+            stmt = stmt.where(HegemonyCone.timebin >= timebin_gte)
         if timebin_lte:
-            query = query.filter(HegemonyCone.timebin <= timebin_lte)
+            stmt = stmt.where(HegemonyCone.timebin <= timebin_lte)
         if asn_ids:
-            query = query.filter(HegemonyCone.asn.in_(asn_ids))
+            stmt = stmt.where(HegemonyCone.asn.in_(asn_ids))
         if af:
-            query = query.filter(HegemonyCone.af == af)
+            stmt = stmt.where(HegemonyCone.af == af)
 
-        total_count = query.count()
+        total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
         # Apply ordering
         if order_by and hasattr(HegemonyCone, order_by):
-            query = query.order_by(getattr(HegemonyCone, order_by))
+            stmt = stmt.order_by(getattr(HegemonyCone, order_by))
         else:
-            query = query.order_by(HegemonyCone.timebin)
+            stmt = stmt.order_by(HegemonyCone.timebin)
 
         # Apply pagination
         offset = (page - 1) * page_size
-        results = query.offset(offset).limit(page_size).all()
+        results = db.scalars(stmt.offset(offset).limit(page_size)).all()
 
         return results, total_count

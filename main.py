@@ -1,10 +1,13 @@
 import importlib
 import pkgutil
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.routing import APIRoute
+from fastapi.responses import JSONResponse
 from controllers import __path__ as controllers_path
 from dotenv import load_dotenv
 import os
+from starlette.routing import Match
 
 try:
     load_dotenv()
@@ -32,10 +35,39 @@ app = FastAPI(
     root_path="" if PROXY_PATH is None else f"/{PROXY_PATH}",
     title="IHR API",
     description=description,
-    version="v1.13",
+    version="v2.0",
     redoc_url=None,
-    swagger_ui_parameters={ "defaultModelsExpandDepth": -1 }
+    swagger_ui_parameters={ "defaultModelsExpandDepth": -1 },
 )
+
+@app.middleware("http")
+async def reject_unknown_query_params(request: Request, call_next):
+    scope = request.scope
+    allowed_params = None
+    for route in app.routes:
+        if not isinstance(route, APIRoute):
+            continue
+        # Use Starlette's own matching — handles path params, methods, everything
+        match, _ = route.matches(scope)
+        if match == Match.FULL:
+            allowed_params = {p.name for p in route.dependant.query_params}
+            break
+    if allowed_params is not None:
+        extra = set(request.query_params.keys()) - allowed_params
+        if extra:
+            return JSONResponse(
+                {
+                    "error": "invalid_query_params",
+                    "unexpected": sorted(extra),
+                    "allowed": sorted(allowed_params),
+                },
+                status_code=400,
+            )
+    return await call_next(request)
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return Response(status_code=204)
 
 # Automatically import and register all routers inside "controllers"
 for _, module_name, _ in pkgutil.iter_modules(controllers_path):

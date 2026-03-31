@@ -1,9 +1,9 @@
 from datetime import datetime
 from sqlalchemy.orm import Session, contains_eager, aliased
+from sqlalchemy import select, func
 from models.hegemony_country import HegemonyCountry
 from typing import Optional, List, Tuple
 from utils import page_size
-from sqlalchemy import func
 
 
 class HegemonyCountryRepository:
@@ -24,48 +24,48 @@ class HegemonyCountryRepository:
         order_by: Optional[str] = None
     ) -> Tuple[List[HegemonyCountry], int]:
         ASN = aliased(HegemonyCountry.asn_relation.property.mapper.class_)
-        
-        query = db.query(HegemonyCountry)\
-                .join(ASN, HegemonyCountry.asn_relation)\
-                .options(   
-                    contains_eager(HegemonyCountry.asn_relation, alias=ASN),
-                )
+
+        stmt = (
+            select(HegemonyCountry)
+            .join(HegemonyCountry.asn_relation.of_type(ASN))
+            .options(contains_eager(HegemonyCountry.asn_relation.of_type(ASN)))
+        )
 
         # If no time filters specified, get rows with max timebin
         if not timebin_gte and not timebin_lte:
-            max_timebin = db.query(func.max(HegemonyCountry.timebin)).scalar()
-            query = query.filter(HegemonyCountry.timebin == max_timebin)
+            max_timebin = db.scalar(select(func.max(HegemonyCountry.timebin)))
+            stmt = stmt.where(HegemonyCountry.timebin == max_timebin)
 
         # Apply filters
         if timebin_gte:
-            query = query.filter(HegemonyCountry.timebin >= timebin_gte)
+            stmt = stmt.where(HegemonyCountry.timebin >= timebin_gte)
         if timebin_lte:
-            query = query.filter(HegemonyCountry.timebin <= timebin_lte)
+            stmt = stmt.where(HegemonyCountry.timebin <= timebin_lte)
         if asn_ids:
-            query = query.filter(HegemonyCountry.asn.in_(asn_ids))
+            stmt = stmt.where(HegemonyCountry.asn.in_(asn_ids))
         if countries:
-            query = query.filter(HegemonyCountry.country.in_(countries))
+            stmt = stmt.where(HegemonyCountry.country.in_(countries))
         if af is not None:
-            query = query.filter(HegemonyCountry.af == af)
+            stmt = stmt.where(HegemonyCountry.af == af)
         if weightscheme is not None:
-            query = query.filter(HegemonyCountry.weightscheme == weightscheme)
+            stmt = stmt.where(HegemonyCountry.weightscheme == weightscheme)
         if transitonly is not None:
-            query = query.filter(HegemonyCountry.transitonly == transitonly)
+            stmt = stmt.where(HegemonyCountry.transitonly == transitonly)
         if hege is not None:
-            query = query.filter(HegemonyCountry.hege == hege)
+            stmt = stmt.where(HegemonyCountry.hege == hege)
         if hege_gte is not None:
-            query = query.filter(HegemonyCountry.hege >= hege_gte)
+            stmt = stmt.where(HegemonyCountry.hege >= hege_gte)
         if hege_lte is not None:
-            query = query.filter(HegemonyCountry.hege <= hege_lte)
+            stmt = stmt.where(HegemonyCountry.hege <= hege_lte)
 
-        total_count = query.count()
+        total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
         # Apply ordering
         if order_by and hasattr(HegemonyCountry, order_by):
-            query = query.order_by(getattr(HegemonyCountry, order_by))
+            stmt = stmt.order_by(getattr(HegemonyCountry, order_by))
 
         # Apply pagination
         offset = (page - 1) * page_size
-        results = query.offset(offset).limit(page_size).all()
+        results = db.scalars(stmt.offset(offset).limit(page_size)).unique().all()
 
         return results, total_count

@@ -1,5 +1,5 @@
 from dtos.disco_probes_dto import DiscoProbesDTO
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import List, Optional
 
@@ -13,13 +13,12 @@ class DiscoEventsDTO(BaseModel):
     nbdiscoprobes: int
     totalprobes: int
     ongoing: bool
-    discoprobes: List[DiscoProbesDTO]
+    discoprobes: Optional[List[DiscoProbesDTO]] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
     @staticmethod
-    def from_model(disco_event):
+    def from_model(disco_event, include_probe_details: bool = False):
         return DiscoEventsDTO(
             id=disco_event.id,
             streamtype=disco_event.streamtype,
@@ -30,6 +29,6 @@ class DiscoEventsDTO(BaseModel):
             nbdiscoprobes=disco_event.nbdiscoprobes,
             totalprobes=disco_event.totalprobes,
             ongoing=disco_event.ongoing,
-            discoprobes=[DiscoProbesDTO.from_orm(
-                probe) for probe in disco_event.probes]
+            discoprobes=[DiscoProbesDTO.model_validate(probe) for probe in disco_event.probes]
+            if include_probe_details else None,
         )

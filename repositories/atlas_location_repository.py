@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select, func
 from models.atlas_location import AtlasLocation
 from typing import Optional, List, Tuple
 from utils import page_size
@@ -14,24 +15,24 @@ class AtlasLocationRepository:
         page: int = 1,
         order_by: Optional[str] = None
     ) -> Tuple[List[AtlasLocation], int]:
-        query = db.query(AtlasLocation)
+        stmt = select(AtlasLocation)
 
         # Apply filters
         if name:
-            query = query.filter(AtlasLocation.name.ilike(f"%{name}%"))
+            stmt = stmt.where(AtlasLocation.name.ilike(f"%{name}%"))
         if type:
-            query = query.filter(AtlasLocation.type == type)
+            stmt = stmt.where(AtlasLocation.type == type)
         if af:
-            query = query.filter(AtlasLocation.af == af)
+            stmt = stmt.where(AtlasLocation.af == af)
 
-        total_count = query.count()
+        total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
         # Apply ordering
         if order_by and hasattr(AtlasLocation, order_by):
-            query = query.order_by(getattr(AtlasLocation, order_by))
+            stmt = stmt.order_by(getattr(AtlasLocation, order_by))
 
         # Apply pagination
         offset = (page - 1) * page_size
-        results = query.offset(offset).limit(page_size).all()
+        results = db.scalars(stmt.offset(offset).limit(page_size)).all()
 
         return results, total_count
