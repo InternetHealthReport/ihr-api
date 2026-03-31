@@ -31,10 +31,12 @@ class HegemonyCountryRepository:
             .options(contains_eager(HegemonyCountry.asn_relation.of_type(ASN)))
         )
 
+        # If no time filters specified, get rows with max timebin
         if not timebin_gte and not timebin_lte:
             max_timebin = db.scalar(select(func.max(HegemonyCountry.timebin)))
             stmt = stmt.where(HegemonyCountry.timebin == max_timebin)
 
+        # Apply filters
         if timebin_gte:
             stmt = stmt.where(HegemonyCountry.timebin >= timebin_gte)
         if timebin_lte:
@@ -58,9 +60,11 @@ class HegemonyCountryRepository:
 
         total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
+        # Apply ordering
         if order_by and hasattr(HegemonyCountry, order_by):
             stmt = stmt.order_by(getattr(HegemonyCountry, order_by))
 
+        # Apply pagination
         offset = (page - 1) * page_size
         results = db.scalars(stmt.offset(offset).limit(page_size)).unique().all()
 

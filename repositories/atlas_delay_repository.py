@@ -27,9 +27,12 @@ class AtlasDelayRepository:
         page: int = 1,
         order_by: Optional[str] = None
     ) -> Tuple[List[AtlasDelay], int]:
-        # Create SQLAlchemy aliases for the AtlasLocation table, used in both startpoint and endpoint
-        # relationships. This is necessary because we are joining the same table (AtlasLocation) twice
-        # in the query, and SQL requires different aliases for each instance to avoid ambiguity.
+        """
+        Get network delays with all possible filters.
+        """
+        # Create SQLAlchemy aliases for the AtlasLocation table, used in both startpoint and endpoint relationships.
+        # This is necessary because we are joining the same table (AtlasLocation) twice in the query,
+        # and SQL requires different aliases for each instance to avoid ambiguity.
         Startpoint = aliased(AtlasDelay.startpoint_relation.property.mapper.class_)
         Endpoint = aliased(AtlasDelay.endpoint_relation.property.mapper.class_)
 
@@ -43,10 +46,12 @@ class AtlasDelayRepository:
             )
         )
 
+        # If no time filters specified, get rows with max timebin
         if not timebin and not timebin_gte and not timebin_lte:
             max_timebin = db.scalar(select(func.max(AtlasDelay.timebin)))
             stmt = stmt.where(AtlasDelay.timebin == max_timebin)
 
+        # Apply timebin filters
         if timebin:
             stmt = stmt.where(AtlasDelay.timebin == timebin)
         if timebin_gte:
@@ -121,9 +126,11 @@ class AtlasDelayRepository:
 
         total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
+        # Apply ordering
         if order_by and hasattr(AtlasDelay, order_by):
             stmt = stmt.order_by(getattr(AtlasDelay, order_by))
 
+        # Apply pagination
         offset = (page - 1) * page_size
         results = db.scalars(stmt.offset(offset).limit(page_size)).unique().all()
 

@@ -17,6 +17,7 @@ class AtlasLocationRepository:
     ) -> Tuple[List[AtlasLocation], int]:
         stmt = select(AtlasLocation)
 
+        # Apply filters
         if name:
             stmt = stmt.where(AtlasLocation.name.ilike(f"%{name}%"))
         if type:
@@ -26,9 +27,11 @@ class AtlasLocationRepository:
 
         total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
+        # Apply ordering
         if order_by and hasattr(AtlasLocation, order_by):
             stmt = stmt.order_by(getattr(AtlasLocation, order_by))
 
+        # Apply pagination
         offset = (page - 1) * page_size
         results = db.scalars(stmt.offset(offset).limit(page_size)).all()
 

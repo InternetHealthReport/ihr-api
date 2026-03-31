@@ -41,10 +41,12 @@ class HegemonyPrefixRepository:
             )
         )
 
+        # If no time filters specified, get rows with max timebin
         if not timebin_gte and not timebin_lte:
             max_timebin = db.scalar(select(func.max(HegemonyPrefix.timebin)))
             stmt = stmt.where(HegemonyPrefix.timebin == max_timebin)
 
+        # Apply filters
         if timebin_gte:
             stmt = stmt.where(HegemonyPrefix.timebin >= timebin_gte)
         if timebin_lte:
@@ -78,9 +80,11 @@ class HegemonyPrefixRepository:
 
         total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
+        # Apply ordering
         if order_by and hasattr(HegemonyPrefix, order_by):
             stmt = stmt.order_by(getattr(HegemonyPrefix, order_by))
 
+        # Apply pagination
         offset = (page - 1) * page_size
         results = db.scalars(stmt.offset(offset).limit(page_size)).unique().all()
 

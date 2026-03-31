@@ -26,6 +26,9 @@ class AtlasDelayAlarmsRepository:
         page: int = 1,
         order_by: Optional[str] = None
     ) -> Tuple[List[AtlasDelayAlarms], int]:
+        """
+        Get network delay alarms with all possible filters.
+        """
         Startpoint = aliased(AtlasDelayAlarms.startpoint_relation.property.mapper.class_)
         Endpoint = aliased(AtlasDelayAlarms.endpoint_relation.property.mapper.class_)
 
@@ -39,6 +42,7 @@ class AtlasDelayAlarmsRepository:
             )
         )
 
+        # If no time filters specified, get rows with max timebin
         if not timebin and not timebin_gte and not timebin_lte:
             max_timebin = db.scalar(select(func.max(AtlasDelayAlarms.timebin)))
             stmt = stmt.where(AtlasDelayAlarms.timebin == max_timebin)

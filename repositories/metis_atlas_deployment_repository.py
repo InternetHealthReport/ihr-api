@@ -27,10 +27,12 @@ class MetisAtlasDeploymentRepository:
             .options(contains_eager(MetisAtlasDeployment.asn_relation))
         )
 
+        # If no time filters specified, get rows with max timebin
         if not timebin and not timebin_gte and not timebin_lte:
             max_timebin = db.scalar(select(func.max(MetisAtlasDeployment.timebin)))
             stmt = stmt.where(MetisAtlasDeployment.timebin == max_timebin)
 
+        # Apply filters
         if timebin:
             stmt = stmt.where(MetisAtlasDeployment.timebin == timebin)
         if timebin_gte:
@@ -50,9 +52,11 @@ class MetisAtlasDeploymentRepository:
 
         total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
+        # Apply ordering
         if order_by and hasattr(MetisAtlasDeployment, order_by):
             stmt = stmt.order_by(getattr(MetisAtlasDeployment, order_by))
 
+        # Apply pagination
         offset = (page - 1) * page_size
         results = db.scalars(stmt.offset(offset).limit(page_size)).unique().all()
 

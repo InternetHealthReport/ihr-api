@@ -19,10 +19,12 @@ class HegemonyConeRepository:
     ) -> Tuple[List[HegemonyCone], int]:
         stmt = select(HegemonyCone)
 
+        # If no time filters specified, get rows with max timebin
         if not timebin_gte and not timebin_lte:
             max_timebin = db.scalar(select(func.max(HegemonyCone.timebin)))
             stmt = stmt.where(HegemonyCone.timebin == max_timebin)
 
+        # Apply filters
         if timebin_gte:
             stmt = stmt.where(HegemonyCone.timebin >= timebin_gte)
         if timebin_lte:
@@ -34,11 +36,13 @@ class HegemonyConeRepository:
 
         total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
+        # Apply ordering
         if order_by and hasattr(HegemonyCone, order_by):
             stmt = stmt.order_by(getattr(HegemonyCone, order_by))
         else:
             stmt = stmt.order_by(HegemonyCone.timebin)
 
+        # Apply pagination
         offset = (page - 1) * page_size
         results = db.scalars(stmt.offset(offset).limit(page_size)).all()
 

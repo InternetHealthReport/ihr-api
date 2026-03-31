@@ -19,6 +19,7 @@ class NetworksRepository:
     ) -> Tuple[List[ASN], int]:
         stmt = select(ASN)
 
+        # Apply filters
         if name:
             stmt = stmt.where(ASN.name.ilike(f"%{name}%"))
         if numbers:
@@ -28,6 +29,7 @@ class NetworksRepository:
         if number_lte:
             stmt = stmt.where(ASN.number <= number_lte)
         if search:
+            # Handle AS/IX prefix in search
             search_value = search
             if search.upper().startswith(("AS", "IX")):
                 try:
@@ -41,9 +43,11 @@ class NetworksRepository:
 
         total_count = db.scalar(select(func.count()).select_from(stmt.subquery()))
 
+        # Apply ordering
         if order_by and hasattr(ASN, order_by):
             stmt = stmt.order_by(getattr(ASN, order_by))
 
+        # Apply pagination
         offset = (page - 1) * page_size
         results = db.scalars(stmt.offset(offset).limit(page_size)).all()
 

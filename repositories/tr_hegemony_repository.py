@@ -39,6 +39,7 @@ class TRHegemonyRepository:
             )
         )
 
+        # If no time filters specified, get rows with max timebin
         if not timebin and not timebin_gte and not timebin_lte:
             max_timebin = db.scalar(select(func.max(TRHegemony.timebin)))
             stmt = stmt.where(TRHegemony.timebin == max_timebin)
