@@ -16,7 +16,7 @@ if DATABASE_URL is not None:
     # Create the SQLAlchemy engine with the database URL.
     # pool_size / max_overflow cap concurrent DB connections so one slow
     # query can't starve the whole server.  statement_timeout kills any
-    # single query that runs longer than 60 s so a runaway request doesn't
+    # single query that runs longer than 20 s so a runaway request doesn't
     # hold a connection indefinitely.
     engine = create_engine(
         DATABASE_URL,
@@ -24,7 +24,7 @@ if DATABASE_URL is not None:
         max_overflow=5,
         pool_timeout=30,
         pool_pre_ping=True,
-        connect_args={"options": "-c statement_timeout=60000"},
+        connect_args={"options": "-c statement_timeout=20000"},
     )
     # Create a session factory
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

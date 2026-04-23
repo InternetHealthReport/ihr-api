@@ -69,6 +69,10 @@ async def reject_unknown_query_params(request: Request, call_next):
 async def favicon():
     return Response(status_code=204)
 
+@app.get("/health", include_in_schema=False)
+def health():
+    return Response(status_code=204)
+
 # Automatically import and register all routers inside "controllers"
 for _, module_name, _ in pkgutil.iter_modules(controllers_path):
     module = importlib.import_module(f"controllers.{module_name}")
