@@ -35,7 +35,7 @@ app = FastAPI(
     root_path="" if PROXY_PATH is None else f"/{PROXY_PATH}",
     title="IHR API",
     description=description,
-    version="v2.0",
+    version="v2.1",
     redoc_url=None,
     swagger_ui_parameters={ "defaultModelsExpandDepth": -1 },
 )
