@@ -70,7 +70,8 @@ class HegemonyController:
                 detail="Required parameter missing. Please provide one of the following parameters: ['originasn', 'asn']"
             )
 
-        hegemony_data, total_count = HegemonyController.service.get_hegemony(
+        hegemony_data, total_count = await run_with_timeout(
+            HegemonyController.service.get_hegemony,
             db,
             timebin_gte=timebin__gte,
             timebin_lte=timebin__lte,
@@ -81,7 +82,7 @@ class HegemonyController:
             hege_gte=hege__gte,
             hege_lte=hege__lte,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         # Calculate pagination
@@ -130,14 +131,15 @@ class HegemonyController:
         # Convert comma-separated ASNs to list
         asn_list = [int(x.strip()) for x in asn.split(",")] if asn else None
 
-        cones, total_count = HegemonyController.service.get_hegemony_cones(
+        cones, total_count = await run_with_timeout(
+            HegemonyController.service.get_hegemony_cones,
             db,
             timebin_gte=timebin__gte,
             timebin_lte=timebin__lte,
             asn_ids=asn_list,
             af=af,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         # Calculate pagination
@@ -193,7 +195,8 @@ class HegemonyController:
         originasn_list = [int(x.strip())
                           for x in originasn.split(",")] if originasn else None
 
-        alarms, total_count = HegemonyController.service.get_hegemony_alarms(
+        alarms, total_count = await run_with_timeout(
+            HegemonyController.service.get_hegemony_alarms,
             db,
             timebin_gte=timebin__gte,
             timebin_lte=timebin__lte,
@@ -203,7 +206,7 @@ class HegemonyController:
             deviation_gte=deviation__gte,
             deviation_lte=deviation__lte,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         # Calculate pagination
@@ -272,7 +275,8 @@ class HegemonyController:
         country_list = [x.strip()
                         for x in country.split(",")] if country else None
 
-        countries, total_count = HegemonyController.service.get_hegemony_countries(
+        countries, total_count = await run_with_timeout(
+            HegemonyController.service.get_hegemony_countries,
             db,
             timebin_gte=timebin__gte,
             timebin_lte=timebin__lte,
@@ -285,7 +289,7 @@ class HegemonyController:
             hege_gte=hege__gte,
             hege_lte=hege__lte,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         # Calculate pagination
@@ -369,7 +373,8 @@ class HegemonyController:
         country_list = [x.strip()
                         for x in country.split(",")] if country else None
 
-        prefixes, total_count = HegemonyController.service.get_hegemony_prefixes(
+        prefixes, total_count = await run_with_timeout(
+            HegemonyController.service.get_hegemony_prefixes,
             db,
             timebin_gte=timebin__gte,
             timebin_lte=timebin__lte,
@@ -387,7 +392,7 @@ class HegemonyController:
             hege_lte=hege__lte,
             origin_only=origin_only,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         # Calculate pagination

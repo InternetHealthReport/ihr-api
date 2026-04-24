@@ -5,7 +5,7 @@ from services.networks_service import NetworksService
 from dtos.networks_dto import NetworksDTO
 from dtos.generic_response_dto import GenericResponseDTO, build_url
 from config.database import get_db
-from utils import page_size
+from utils import page_size, run_with_timeout
 
 router = APIRouter(prefix="/networks", tags=["Networks"])
 
@@ -42,7 +42,8 @@ class NetworksController:
         number_list = [int(x.strip())
                        for x in number.split(",")] if number else None
 
-        networks, total_count = NetworksController.service.get_networks(
+        networks, total_count = await run_with_timeout(
+            NetworksController.service.get_networks,
             db,
             name=name,
             numbers=number_list,
@@ -50,7 +51,7 @@ class NetworksController:
             number_lte=number__lte,
             search=search,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         # Calculate pagination

@@ -40,13 +40,14 @@ class NetworkDelayController:
         """
         List locations monitored for network delay measurements. A location can be, for example, an AS, city, Atlas probe.
         """
-        locations, total_count = NetworkDelayController.service.get_network_delay_locations(
+        locations, total_count = await run_with_timeout(
+            NetworkDelayController.service.get_network_delay_locations,
             db,
             name=name,
             type=type,
             af=af,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         # Calculate pagination
@@ -130,7 +131,8 @@ class NetworkDelayController:
         """
         timebin__gte, timebin__lte = validate_timebin_params(
             timebin, timebin__gte, timebin__lte)
-        delays, total_count = NetworkDelayController.service.get_network_delays(
+        delays, total_count = await run_with_timeout(
+            NetworkDelayController.service.get_network_delays,
             db,
             timebin=timebin,
             timebin_gte=timebin__gte,
@@ -147,7 +149,7 @@ class NetworkDelayController:
             startpoint_key=startpoint_key,
             endpoint_key=endpoint_key,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         next_page = page + 1 if (page * page_size) < total_count else None
@@ -237,7 +239,8 @@ class NetworkDelayController:
         timebin__gte, timebin__lte = validate_timebin_params(
             timebin, timebin__gte, timebin__lte)
 
-        alarms, total_count = NetworkDelayController.service.get_network_delay_alarms(
+        alarms, total_count = await run_with_timeout(
+            NetworkDelayController.service.get_network_delay_alarms,
             db,
             timebin=timebin,
             timebin_gte=timebin__gte,
@@ -253,7 +256,7 @@ class NetworkDelayController:
             deviation_gte=deviation__gte,
             deviation_lte=deviation__lte,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         next_page = page + 1 if (page * page_size) < total_count else None

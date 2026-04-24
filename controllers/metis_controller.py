@@ -7,8 +7,7 @@ from dtos.metis_atlas_deployment_dto import MetisAtlasDeploymentDTO
 from dtos.metis_atlas_selection_dto import MetisAtlasSelectionDTO
 from config.database import get_db
 from typing import Optional
-from utils import page_size
-from utils import validate_timebin_params
+from utils import page_size, run_with_timeout, validate_timebin_params
 
 router = APIRouter(prefix="/metis/atlas", tags=["Metis"])
 
@@ -52,7 +51,8 @@ class MetisController:
         timebin__gte, timebin__lte = validate_timebin_params(
             timebin, timebin__gte, timebin__lte, max_days=31)
 
-        deployments, total_count = MetisController.service.get_metis_atlas_deployments(
+        deployments, total_count = await run_with_timeout(
+            MetisController.service.get_metis_atlas_deployments,
             db,
             timebin=timebin,
             timebin_gte=timebin__gte,
@@ -63,7 +63,7 @@ class MetisController:
             metric=metric,
             af=af,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         # Calculate pagination
@@ -113,7 +113,8 @@ class MetisController:
         timebin__gte, timebin__lte = validate_timebin_params(
             timebin, timebin__gte, timebin__lte, max_days=31)
 
-        selections, total_count = MetisController.service.get_metis_atlas_selections(
+        selections, total_count = await run_with_timeout(
+            MetisController.service.get_metis_atlas_selections,
             db,
             timebin=timebin,
             timebin_gte=timebin__gte,
@@ -124,7 +125,7 @@ class MetisController:
             metric=metric,
             af=af,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         # Calculate pagination

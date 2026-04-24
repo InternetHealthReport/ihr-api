@@ -1,9 +1,10 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Callable, Any
 from datetime import datetime, timedelta, date
 from fastapi import HTTPException
 from datetime import datetime, timedelta
 from typing import Optional
 from dotenv import load_dotenv
+import asyncio
 import os
 
 # Load environment variables from .env file
@@ -13,6 +14,26 @@ except:
     pass
 
 page_size = int(os.getenv("PAGE_SIZE"))
+REQUEST_TIMEOUT = float(os.getenv("REQUEST_TIMEOUT"))
+
+
+async def run_with_timeout(fn: Callable, db, /, *args: Any, **kwargs: Any) -> Any:
+    # Pre-acquire the connection so we hold a reference to the raw driver
+    # connection before the thread starts. psycopg2's cancel() is explicitly
+    # thread-safe: it sends PostgreSQL's cancellation signal, causing any
+    # in-flight query to fail with pgcode 57014 so the thread exits immediately.
+    driver_conn = db.connection().connection.driver_connection
+    try:
+        return await asyncio.wait_for(
+            asyncio.to_thread(fn, db, *args, **kwargs),
+            timeout=REQUEST_TIMEOUT,
+        )
+    except asyncio.TimeoutError:
+        try:
+            driver_conn.cancel()
+        except Exception:
+            pass
+        raise HTTPException(status_code=504, detail="The request took too long")
 
 
 def validate_timebin_params(

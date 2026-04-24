@@ -5,7 +5,7 @@ from dtos.generic_response_dto import GenericResponseDTO, build_url
 from dtos.country_dto import CountryDTO
 from config.database import get_db
 from typing import Optional
-from utils import page_size
+from utils import page_size, run_with_timeout
 
 # Define a router for all endpoints under /countries
 router = APIRouter(prefix="/countries", tags=["Countries"])
@@ -17,7 +17,7 @@ class CountryController:
     @staticmethod
     @router.get("", response_model=GenericResponseDTO[CountryDTO])
     @router.get("/", response_model=GenericResponseDTO[CountryDTO], include_in_schema=False)
-    def get_all_countries(
+    async def get_all_countries(
         request: Request,
         db: Session = Depends(get_db),
         page: Optional[int] = Query(
@@ -32,12 +32,13 @@ class CountryController:
         """Retrieves paginated countries with optional filters."""
 
         page = page or 1
-        countries, total_count = CountryController.service.get_all_countries(
+        countries, total_count = await run_with_timeout(
+            CountryController.service.get_all_countries,
             db,
             code=code,
             name=name,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         # Calculate next and previous pages

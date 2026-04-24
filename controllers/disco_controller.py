@@ -6,7 +6,7 @@ from dtos.disco_events_dto import DiscoEventsDTO
 from config.database import get_db
 from typing import Optional
 from datetime import datetime
-from utils import page_size
+from utils import page_size, run_with_timeout
 
 router = APIRouter(prefix="/disco", tags=["Disco"])
 
@@ -74,7 +74,8 @@ class DiscoController:
                 detail="At least one time parameter is required: starttime, starttime__gte, starttime__lte, endtime, endtime__gte, or endtime__lte."
             )
 
-        events_data, total_count = DiscoController.service.get_disco_events(
+        events_data, total_count = await run_with_timeout(
+            DiscoController.service.get_disco_events,
             db,
             streamname=streamname,
             streamtype=streamtype,
@@ -96,7 +97,7 @@ class DiscoController:
             ongoing=ongoing,
             include_probe_details=include_probe_details,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         next_page = page + 1 if (page * page_size) < total_count else None

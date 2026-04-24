@@ -10,21 +10,25 @@ try:
 except:
     pass
 
+REQUEST_TIMEOUT = float(os.getenv("REQUEST_TIMEOUT"))
+_statement_timeout_ms = int(REQUEST_TIMEOUT * 1000)
+
 # Read the database URL from the environment variable
 DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL is not None:
     # Create the SQLAlchemy engine with the database URL.
     # pool_size / max_overflow cap concurrent DB connections so one slow
     # query can't starve the whole server.  statement_timeout kills any
-    # single query that runs longer than 20 s so a runaway request doesn't
+    # single query that runs longer than 30 s so a runaway request doesn't
     # hold a connection indefinitely.
     engine = create_engine(
-        DATABASE_URL,
+    DATABASE_URL,
         pool_size=10,
         max_overflow=5,
-        pool_timeout=30,
+        pool_timeout=10,
+        pool_recycle=1800,
         pool_pre_ping=True,
-        connect_args={"options": "-c statement_timeout=20000"},
+        connect_args={"options": f"-c statement_timeout={_statement_timeout_ms}"},
     )
     # Create a session factory
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -42,5 +46,8 @@ def get_db():
     db = SessionLocal()
     try:
         yield db
+    except Exception:
+        db.rollback()
+        raise
     finally:
         db.close()

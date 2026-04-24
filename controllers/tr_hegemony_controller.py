@@ -6,8 +6,7 @@ from dtos.tr_hegemony_dto import TRHegemonyDTO
 from config.database import get_db
 from typing import Optional
 from datetime import datetime
-from utils import page_size
-from utils import validate_timebin_params
+from utils import page_size, run_with_timeout, validate_timebin_params
 
 router = APIRouter(prefix="/tr_hegemony", tags=["TR Hegemony"])
 
@@ -61,7 +60,8 @@ class TRHegemonyController:
         timebin__gte, timebin__lte = validate_timebin_params(
             timebin, timebin__gte, timebin__lte, max_days=31)
 
-        hegemony_data, total_count = TRHegemonyController.service.get_tr_hegemony(
+        hegemony_data, total_count = await run_with_timeout(
+            TRHegemonyController.service.get_tr_hegemony,
             db,
             timebin=timebin,
             timebin_gte=timebin__gte,
@@ -77,7 +77,7 @@ class TRHegemonyController:
             hege_lte=hege__lte,
             af=af,
             page=page,
-            order_by=ordering
+            order_by=ordering,
         )
 
         next_page = page + 1 if (page * page_size) < total_count else None

@@ -10,6 +10,7 @@ import os
 from starlette.routing import Match
 import time
 import logging
+from sqlalchemy.exc import OperationalError
 
 try:
     load_dotenv()
@@ -102,6 +103,13 @@ async def access_logging_middleware(request: Request, call_next):
         else:
             logger.info(*msg)
     return response
+
+async def db_error_handler(request: Request, exc: OperationalError):
+    if getattr(exc.orig, "pgcode", None) == "57014":  # 57014 = query_canceled
+        return JSONResponse({"error": "query_timeout", "message": "The request took too long"}, status_code=504)
+    return JSONResponse({"error": "database_error"}, status_code=500)
+
+app.add_exception_handler(OperationalError, db_error_handler)
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
