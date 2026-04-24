@@ -8,6 +8,8 @@ from controllers import __path__ as controllers_path
 from dotenv import load_dotenv
 import os
 from starlette.routing import Match
+import time
+import logging
 
 try:
     load_dotenv()
@@ -29,6 +31,21 @@ Parameters ending with __lte and __gte (acronyms for 'less than or equal to', an
 
 [Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 """
+
+# Silence uvicorn's built-in access logger — and leave it alone
+uv_access = logging.getLogger("uvicorn.access")
+uv_access.handlers[:] = []
+uv_access.propagate = False
+uv_access.setLevel(logging.WARNING)
+
+# Use your OWN logger name, not "uvicorn.access"
+logger = logging.getLogger("ihr.access")
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+logger.propagate = False  # prevent bubbling up to the root logger
 
 # The base URL of the app
 app = FastAPI(
@@ -65,12 +82,29 @@ async def reject_unknown_query_params(request: Request, call_next):
             )
     return await call_next(request)
 
+@app.middleware("http")
+async def access_logging_middleware(request: Request, call_next):
+    start = time.perf_counter()
+    try:
+        response = await call_next(request)
+        status = response.status_code
+    except Exception:
+        status = 500
+        raise
+    finally:
+        duration_s = time.perf_counter() - start
+        client = request.client.host if request.client else "unknown"
+        msg = '%s - "%s %s" %s %.3fs', client, request.method, request.url.path, status, duration_s
+        if status >= 500:
+            logger.error(*msg)
+        elif status >= 400:
+            logger.warning(*msg)
+        else:
+            logger.info(*msg)
+    return response
+
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
-    return Response(status_code=204)
-
-@app.get("/health", include_in_schema=False)
-def health():
     return Response(status_code=204)
 
 # Automatically import and register all routers inside "controllers"
