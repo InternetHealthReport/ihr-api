@@ -22,6 +22,10 @@ In the project root directory, create a new `.env` file to define your specific 
 DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
 PROXY_PATH=ihr/api
 PAGE_SIZE=100000
+POOL_SIZE=10
+MAX_OVERFLOW=5
+POOL_TIMEOUT=10
+POOL_RECYCLE=1800
 REQUEST_TIMEOUT=30
 ```
 

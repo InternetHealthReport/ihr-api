@@ -53,7 +53,7 @@ app = FastAPI(
     root_path="" if PROXY_PATH is None else f"/{PROXY_PATH}",
     title="IHR API",
     description=description,
-    version="v2.1",
+    version="v2.2",
     redoc_url=None,
     swagger_ui_parameters={ "defaultModelsExpandDepth": -1 },
 )
@@ -95,7 +95,8 @@ async def access_logging_middleware(request: Request, call_next):
     finally:
         duration_s = time.perf_counter() - start
         client = request.client.host if request.client else "unknown"
-        msg = '%s - "%s %s" %s %.3fs', client, request.method, request.url.path, status, duration_s
+        path = request.url.path + ("?" + str(request.url.query) if request.url.query else "")
+        msg = '%s - "%s %s" %s %.3fs', client, request.method, path, status, duration_s
         if status >= 500:
             logger.error(*msg)
         elif status >= 400:

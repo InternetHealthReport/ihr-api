@@ -10,6 +10,10 @@ try:
 except:
     pass
 
+POOL_SIZE = int(os.getenv("POOL_SIZE"))
+MAX_OVERFLOW = int(os.getenv("MAX_OVERFLOW"))
+POOL_TIMEOUT = int(os.getenv("POOL_TIMEOUT"))
+POOL_RECYCLE = int(os.getenv("POOL_RECYCLE"))
 REQUEST_TIMEOUT = float(os.getenv("REQUEST_TIMEOUT"))
 _statement_timeout_ms = int(REQUEST_TIMEOUT * 1000)
 
@@ -19,14 +23,14 @@ if DATABASE_URL is not None:
     # Create the SQLAlchemy engine with the database URL.
     # pool_size / max_overflow cap concurrent DB connections so one slow
     # query can't starve the whole server.  statement_timeout kills any
-    # single query that runs longer than 30 s so a runaway request doesn't
+    # single query that runs longer than N sec so a runaway request doesn't
     # hold a connection indefinitely.
     engine = create_engine(
     DATABASE_URL,
-        pool_size=10,
-        max_overflow=5,
-        pool_timeout=10,
-        pool_recycle=1800,
+        pool_size=POOL_SIZE,
+        max_overflow=MAX_OVERFLOW,
+        pool_timeout=POOL_TIMEOUT,
+        pool_recycle=POOL_RECYCLE,
         pool_pre_ping=True,
         connect_args={"options": f"-c statement_timeout={_statement_timeout_ms}"},
     )
